@@ -1,0 +1,28 @@
+{
+  "name": "mini-state-machine",
+  "version": "0.0.0",
+  "description": "A miniature state machine",
+  "main": "source/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/perry-mitchell/mini-state-machine.git"
+  },
+  "keywords": [
+    "fsm",
+    "stm",
+    "state",
+    "machine",
+    "finite",
+    "mini",
+    "transition"
+  ],
+  "author": "Perry Mitchell <perry@perrymitchell.net>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/perry-mitchell/mini-state-machine/issues"
+  },
+  "homepage": "https://github.com/perry-mitchell/mini-state-machine#readme"
+}
