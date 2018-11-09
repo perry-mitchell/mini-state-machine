@@ -4,7 +4,7 @@ function find(arr, cb, { index = false } = {}) {
             return index ? i : arr[i];
         }
     }
-    return undefined;
+    return index ? -1 : undefined;
 }
 
 module.exports = {
