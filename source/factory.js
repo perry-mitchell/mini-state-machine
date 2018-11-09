@@ -11,11 +11,16 @@ function createStateMachine({ initial, transitions } = {}) {
         state: initial
     };
     return {
-        get pending() { return scope.pending; },
-        get state() { return getState(scope); },
+        get pending() {
+            return scope.pending;
+        },
+        get state() {
+            return getState(scope);
+        },
         off: (event, stateOrTransition, cb) => events.removeHandler(event, stateOrTransition, cb),
         on: (event, stateOrTransition, cb) => events.addHandler(event, stateOrTransition, cb),
-        once: (event, stateOrTransition, cb) => events.addHandler(event, stateOrTransition, cb, { once: true }),
+        once: (event, stateOrTransition, cb) =>
+            events.addHandler(event, stateOrTransition, cb, { once: true }),
         transition: action => transitionStateMachine(scope, action)
     };
 }

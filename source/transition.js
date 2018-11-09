@@ -10,10 +10,7 @@ function generatePaths(transitions) {
         if (toState !== "*" && states.indexOf(toState) === -1) {
             newStates.push(toState);
         }
-        return [
-            ...states,
-            ...newStates
-        ]
+        return [...states, ...newStates];
     }, []);
     return transitions.reduce((paths, transition) => {
         const newPaths = [];
@@ -25,10 +22,7 @@ function generatePaths(transitions) {
                 newPaths.push({ name, from: thisFrom, to: thisTo });
             });
         });
-        return [
-            ...paths,
-            ...newPaths
-        ];
+        return [...paths, ...newPaths];
     }, []);
 }
 
@@ -40,31 +34,35 @@ function getPath(context, action) {
 function transitionStateMachine(context, action) {
     const state = getState(context);
     if (context.pending) {
-        throw new Error(`Failed transitioning: Currently pending a transition from state: ${state}`);
+        throw new Error(
+            `Failed transitioning: Currently pending a transition from state: ${state}`
+        );
     }
     const path = getPath(context, action);
     if (!path) {
         const state = getState(context);
-        throw new Error(`Failed transitioning: No transition path found for action '${action}' (state: ${state})`);
+        throw new Error(
+            `Failed transitioning: No transition path found for action '${action}' (state: ${state})`
+        );
     }
-    const {
-        name: transitionName,
-        from: fromState,
-        to: toState
-    } = path;
+    const { name: transitionName, from: fromState, to: toState } = path;
     const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
     context.pending = true;
     return context.events
         .executeHandlers("before", transitionName)
         .then(result => {
             if (result === false) {
-                throw new Error(`Failed transitioning: before event handler cancelled transition: ${transErrorMsg}`);
+                throw new Error(
+                    `Failed transitioning: before event handler cancelled transition: ${transErrorMsg}`
+                );
             }
             return context.events.executeHandlers("leave", fromState);
         })
         .then(result => {
             if (result === false) {
-                throw new Error(`Failed transitioning: leave event handler cancelled transition: ${transErrorMsg}`);
+                throw new Error(
+                    `Failed transitioning: leave event handler cancelled transition: ${transErrorMsg}`
+                );
             }
             // state change now
             context.state = toState;
@@ -84,7 +82,9 @@ function verifyTransitions(transitions) {
     transitions.forEach(transition => {
         ["name", "from", "to"].forEach(strKey => {
             if (typeof transition[strKey] !== "string" || transition[strKey].length <= 0) {
-                throw new Error(`Invalid transition value for '${strKey}': Must be a non-empty string`);
+                throw new Error(
+                    `Invalid transition value for '${strKey}': Must be a non-empty string`
+                );
             }
         });
     });

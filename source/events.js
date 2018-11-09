@@ -14,8 +14,7 @@ function callbackToPromise(callback) {
         uncaught = err;
         output = false;
     }
-    return Promise
-        .resolve(output)
+    return Promise.resolve(output)
         .catch(err => {
             uncaught = err;
             return false;
@@ -44,7 +43,9 @@ function createEventsInterface() {
         },
         executeHandlers: (event, stateOrTransition) => {
             const type = resolveEventType(event);
-            const work = handlers.filter(item => item.item === type && item.value === stateOrTransition);
+            const work = handlers.filter(
+                item => item.item === type && item.value === stateOrTransition
+            );
             return (function doNext() {
                 const item = work.shift();
                 if (!item) {
@@ -64,9 +65,17 @@ function createEventsInterface() {
         },
         removeHandler: (event, stateOrTransition, callback) => {
             const type = resolveEventType(event);
-            const handerInd = find(handlers, item => {
-                return item.item === type && item.value === stateOrTransition && item.callback === callback;
-            }, { index: true });
+            const handerInd = find(
+                handlers,
+                item => {
+                    return (
+                        item.item === type &&
+                        item.value === stateOrTransition &&
+                        item.callback === callback
+                    );
+                },
+                { index: true }
+            );
             if (handerInd >= 0) {
                 handlers.splice(handerInd, 1);
             }
