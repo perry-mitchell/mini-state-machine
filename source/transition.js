@@ -38,11 +38,43 @@ function getPath(context, action) {
 }
 
 function transitionStateMachine(context, action) {
+    const state = getState(context);
+    if (context.pending) {
+        throw new Error(`Failed transitioning: Currently pending a transition from state: ${state}`);
+    }
     const path = getPath(context, action);
     if (!path) {
         const state = getState(context);
-        throw new Error(`Failed transitioning to new state: No transition path found for action '${action}' (state: ${state})`);
+        throw new Error(`Failed transitioning: No transition path found for action '${action}' (state: ${state})`);
     }
+    const {
+        name: transitionName,
+        from: fromState,
+        to: toState
+    } = path;
+    const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
+    context.pending = true;
+    return context.events
+        .executeHandlers("before", transitionName)
+        .then(result => {
+            if (result === false) {
+                throw new Error(`Failed transitioning: before event handler cancelled transition: ${transErrorMsg}`);
+            }
+            return context.events.executeHandlers("leave", fromState);
+        })
+        .then(result => {
+            if (result === false) {
+                throw new Error(`Failed transitioning: leave event handler cancelled transition: ${transErrorMsg}`);
+            }
+            // state change now
+            context.state = toState;
+        })
+        .then(() => context.events.executeHandlers("enter", toState))
+        .then(() => context.events.executeHandlers("after", transitionName))
+        .catch(err => {
+            context.pending = false;
+            throw err;
+        });
 }
 
 function verifyTransitions(transitions) {
