@@ -11,6 +11,6 @@ function createStateMachine({ initial, transitions } = {}) {
     return {
         get pending() { return scope.pending; },
         get state() { return getState(scope); },
-        transition: newState => transitionStateMachine(scope, newState)
+        transition: action => transitionStateMachine(scope, action)
     };
 }

@@ -1,9 +1,48 @@
-function generatePaths(transitions) {
+const { getState } = require("./state.js");
 
+function generatePaths(transitions) {
+    const allStates = transitions.reduce((states, transition) => {
+        const { from: fromState, to: toState } = transition;
+        const newStates = [];
+        if (fromState !== "*" && states.indexOf(fromState) === -1) {
+            newStates.push(fromState);
+        }
+        if (toState !== "*" && states.indexOf(toState) === -1) {
+            newStates.push(toState);
+        }
+        return [
+            ...states,
+            ...newStates
+        ]
+    }, []);
+    return transitions.reduce((paths, transition) => {
+        const newPaths = [];
+        const { name, from: fromState, to: toState } = transition;
+        const fromStates = fromState === "*" ? allStates : [fromState];
+        const toStates = toState === "*" ? allStates : [toState];
+        fromStates.forEach(thisFrom => {
+            toStates.forEach(thisTo => {
+                newPaths.push({ name, from: thisFrom, to: thisTo });
+            });
+        });
+        return [
+            ...paths,
+            ...newPaths
+        ];
+    }, []);
 }
 
-function transitionStateMachine(context, newState) {
+function getPath(context, action) {
+    const state = getState(context);
+    return context.paths.find(statePath => statePath.name === action && statePath.from === state);
+}
 
+function transitionStateMachine(context, action) {
+    const path = getPath(context, action);
+    if (!path) {
+        const state = getState(context);
+        throw new Error(`Failed transitioning to new state: No transition path found for action '${action}' (state: ${state})`);
+    }
 }
 
 function verifyTransitions(transitions) {
