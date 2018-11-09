@@ -8,7 +8,9 @@
     "precommit": "lint-staged",
     "test": "run-s test:all test:format",
     "test:all": "nyc mocha -r test/index.js 'test/**/*.spec.js'",
-    "test:format": "prettier-check '{source,test}/**/*.js'"
+    "test:format": "prettier-check '{source,test}/**/*.js'",
+    "test:unit": "mocha -r test/index.js 'test/unit/**/*.spec.js'",
+    "test:unit:watch": "nodemon --exec 'npm run test:unit'"
   },
   "lint-staged": {
     "{source,test}/**/*.js": [
@@ -41,6 +43,7 @@
     "husky": "^1.1.3",
     "lint-staged": "^8.0.4",
     "mocha": "^5.2.0",
+    "nodemon": "^1.18.6",
     "npm-run-all": "^4.1.3",
     "nyc": "^13.1.0",
     "prettier": "^1.15.1",

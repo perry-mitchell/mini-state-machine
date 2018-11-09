@@ -1,4 +1,5 @@
 const { getState } = require("./state.js");
+const { find } = require("./array.js");
 
 function generatePaths(transitions) {
     const allStates = transitions.reduce((states, transition) => {
@@ -16,7 +17,7 @@ function generatePaths(transitions) {
         const newPaths = [];
         const { name, from: fromState, to: toState } = transition;
         const fromStates = fromState === "*" ? allStates : [fromState];
-        const toStates = toState === "*" ? allStates : [toState];
+        const toStates = [toState];
         fromStates.forEach(thisFrom => {
             toStates.forEach(thisTo => {
                 newPaths.push({ name, from: thisFrom, to: thisTo });
@@ -28,7 +29,7 @@ function generatePaths(transitions) {
 
 function getPath(context, action) {
     const state = getState(context);
-    return context.paths.find(statePath => statePath.name === action && statePath.from === state);
+    return find(context.paths, statePath => statePath.name === action && statePath.from === state);
 }
 
 function transitionStateMachine(context, action) {
@@ -92,6 +93,7 @@ function verifyTransitions(transitions) {
 
 module.exports = {
     generatePaths,
+    getPath,
     transitionStateMachine,
     verifyTransitions
 };
