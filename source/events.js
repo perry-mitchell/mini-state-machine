@@ -35,7 +35,8 @@ function createEventsInterface() {
             handlers.push({
                 type: resolveEventType(event),
                 value: stateOrTransition,
-                callback
+                callback,
+                once
             });
             return {
                 remove: () => interface.removeHandler(event, stateOrTransition, callback)
@@ -50,6 +51,9 @@ function createEventsInterface() {
                     return Promise.resolve();
                 }
                 return callbackToPromise(item.callback).then(result => {
+                    if (item.once === true) {
+                        interface.removeHandler(event, stateOrTransition, item.callback);
+                    }
                     if (result === false) {
                         // cancel transition
                         return false;
@@ -63,6 +67,9 @@ function createEventsInterface() {
             const handerInd = find(handlers, item => {
                 return item.item === type && item.value === stateOrTransition && item.callback === callback;
             }, { index: true });
+            if (handerInd >= 0) {
+                handlers.splice(handerInd, 1);
+            }
         }
     };
     return interface;
