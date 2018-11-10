@@ -1,6 +1,6 @@
 {
   "name": "mini-state-machine",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A miniature state machine",
   "main": "dist/msm.node.js",
   "scripts": {
