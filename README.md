@@ -7,6 +7,12 @@
 
 State machines are extremely useful pieces of functionality that ensure some state of a custom system. Using state machines (or _Finite State Machines_) allows you to define states for a system and all possible transitions between those states, ensuring the system follows only a certain amount of paths between states. An attempt to deviate from the allowed paths will always result in an error (as well as the initial state being preserved).
 
+### Why
+
+Existing solutions were a bit too bloated for my use case - I needed a small and functional state machine with asynchronous transitions. Mini-State-Machine is my take on the bare minimum. If you have suggestions on how I could make it smaller, please create an issue!
+
+Currently the NodeJS version is **less than 5kb minified!**
+
 ### Usage
 
 Usage is simple: Create a state machine instance and you're ready to go!
