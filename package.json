@@ -8,9 +8,11 @@
     "format": "prettier --write '{source,test}/**/*.js'",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run build",
-    "test": "run-s test:all test:format",
-    "test:all": "nyc mocha -r test/index.js 'test/**/*.spec.js'",
+    "test": "run-s test:all build test:integration:dist test:format",
+    "test:all": "nyc mocha -r test/index.js -r test/integration/index.source.js 'test/**/*.spec.js'",
     "test:format": "prettier-check '{source,test}/**/*.js'",
+    "test:integration": "mocha -r test/index.js -r test/integration/index.source.js 'test/integration/**/*.spec.js'",
+    "test:integration:dist": "mocha -r test/index.js -r test/integration/index.dist.js 'test/integration/**/*.spec.js'",
     "test:unit": "mocha -r test/index.js 'test/unit/**/*.spec.js'",
     "test:unit:watch": "nodemon --exec 'npm run test:unit'"
   },
