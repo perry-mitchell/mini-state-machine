@@ -29,7 +29,7 @@ function callbackToPromise(callback) {
 
 function createEventsInterface() {
     const handlers = [];
-    const interface = {
+    const events = {
         addHandler: (event, stateOrTransition, callback, { once = false } = {}) => {
             handlers.push({
                 type: resolveEventType(event),
@@ -38,7 +38,7 @@ function createEventsInterface() {
                 once
             });
             return {
-                remove: () => interface.removeHandler(event, stateOrTransition, callback)
+                remove: () => events.removeHandler(event, stateOrTransition, callback)
             };
         },
         executeHandlers: (event, stateOrTransition) => {
@@ -53,7 +53,7 @@ function createEventsInterface() {
                 }
                 return callbackToPromise(item.callback).then(result => {
                     if (item.once === true) {
-                        interface.removeHandler(event, stateOrTransition, item.callback);
+                        events.removeHandler(event, stateOrTransition, item.callback);
                     }
                     if (result === false) {
                         // cancel transition
@@ -81,7 +81,7 @@ function createEventsInterface() {
             }
         }
     };
-    return interface;
+    return events;
 }
 
 function resolveEventType(event) {
