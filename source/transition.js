@@ -1,6 +1,8 @@
 const { getState } = require("./state.js");
 const { find } = require("./array.js");
 
+const ERR_CODE_TRANSITION_CANCELLED = "TRANSITION_CANCELLED";
+
 function generatePaths(transitions) {
     const allStates = transitions.reduce((states, transition) => {
         const { from: fromState, to: toState } = transition;
@@ -32,53 +34,52 @@ function getPath(context, action) {
     return find(context.paths, statePath => statePath.name === action && statePath.from === state);
 }
 
-function transitionStateMachine(context, action) {
+function transition(context, action) {
     const state = getState(context);
+    const errorPrefix = "Failed transitioning";
     if (context.pending) {
-        throw new Error(
-            `Failed transitioning: Currently pending a transition from state: ${state}`
-        );
+        throw new Error(`${errorPrefix}: Currently pending a transition from state: ${state}`);
     }
     const path = getPath(context, action);
     if (!path) {
         const state = getState(context);
         throw new Error(
-            `Failed transitioning: No transition path found for action '${action}' (state: ${state})`
+            `${errorPrefix}: No transition path found for action '${action}' (state: ${state})`
         );
     }
     const { name: transitionName, from: fromState, to: toState } = path;
     const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
     context.pending = true;
     return context.events
-        .executeHandlers("before", transitionName)
+        .execute("before", transitionName)
         .then(result => {
             if (result === false) {
                 const err = new Error(
-                    `Failed transitioning: before event handler cancelled transition: ${transErrorMsg}`
+                    `${errorPrefix}: before event handler cancelled transition: ${transErrorMsg}`
                 );
-                err.code = "TRANSITION_CANCELLED";
+                err.code = ERR_CODE_TRANSITION_CANCELLED;
                 throw err;
             }
-            return context.events.executeHandlers("leave", fromState);
+            return context.events.execute("leave", fromState);
         })
         .then(result => {
             if (result === false) {
                 const err = new Error(
-                    `Failed transitioning: leave event handler cancelled transition: ${transErrorMsg}`
+                    `${errorPrefix}: leave event handler cancelled transition: ${transErrorMsg}`
                 );
-                err.code = "TRANSITION_CANCELLED";
+                err.code = ERR_CODE_TRANSITION_CANCELLED;
                 throw err;
             }
             // state change now
             context.state = toState;
             context.pending = false;
         })
-        .then(() => context.events.executeHandlers("enter", toState))
-        .then(() => context.events.executeHandlers("after", transitionName))
+        .then(() => context.events.execute("enter", toState))
+        .then(() => context.events.execute("after", transitionName))
         .then(() => true)
         .catch(err => {
             context.pending = false;
-            if (err.code === "TRANSITION_CANCELLED") {
+            if (err.code === ERR_CODE_TRANSITION_CANCELLED) {
                 return false;
             }
             throw err;
@@ -103,6 +104,6 @@ function verifyTransitions(transitions) {
 module.exports = {
     generatePaths,
     getPath,
-    transitionStateMachine,
+    transition,
     verifyTransitions
 };

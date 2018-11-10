@@ -1,7 +1,7 @@
 const {
     generatePaths,
     getPath,
-    transitionStateMachine,
+    transition,
     verifyTransitions
 } = require("../../source/transition.js");
 
@@ -52,7 +52,7 @@ describe("transition", function() {
         });
     });
 
-    describe("transitionStateMachine", function() {
+    describe("transition", function() {
         beforeEach(function() {
             this.context = {
                 paths: generatePaths([
@@ -62,7 +62,7 @@ describe("transition", function() {
                     { name: "fix", from: "ok", to: "invulnerable" }
                 ]),
                 events: {
-                    executeHandlers: sinon.stub().callsFake(() => Promise.resolve())
+                    execute: sinon.stub().callsFake(() => Promise.resolve())
                 },
                 pending: false,
                 state: "ok"
@@ -70,35 +70,29 @@ describe("transition", function() {
         });
 
         it("performs transitions", function() {
-            return transitionStateMachine(this.context, "break").then(() => {
+            return transition(this.context, "break").then(() => {
                 expect(this.context.state).to.equal("damaged");
                 expect(this.context.pending).to.be.false;
             });
         });
 
         it("calls all event handlers in the correct order", function() {
-            return transitionStateMachine(this.context, "break").then(() => {
-                expect(this.context.events.executeHandlers.calledWithExactly("before", "break")).to
-                    .be.true;
-                expect(this.context.events.executeHandlers.calledWithExactly("after", "break")).to
-                    .be.true;
-                expect(this.context.events.executeHandlers.calledWithExactly("leave", "ok")).to.be
+            return transition(this.context, "break").then(() => {
+                expect(this.context.events.execute.calledWithExactly("before", "break")).to.be.true;
+                expect(this.context.events.execute.calledWithExactly("after", "break")).to.be.true;
+                expect(this.context.events.execute.calledWithExactly("leave", "ok")).to.be.true;
+                expect(this.context.events.execute.calledWithExactly("enter", "damaged")).to.be
                     .true;
-                expect(this.context.events.executeHandlers.calledWithExactly("enter", "damaged")).to
-                    .be.true;
-                expect(this.context.events.executeHandlers.getCall(0).args).to.deep.equal([
+                expect(this.context.events.execute.getCall(0).args).to.deep.equal([
                     "before",
                     "break"
                 ]);
-                expect(this.context.events.executeHandlers.getCall(1).args).to.deep.equal([
-                    "leave",
-                    "ok"
-                ]);
-                expect(this.context.events.executeHandlers.getCall(2).args).to.deep.equal([
+                expect(this.context.events.execute.getCall(1).args).to.deep.equal(["leave", "ok"]);
+                expect(this.context.events.execute.getCall(2).args).to.deep.equal([
                     "enter",
                     "damaged"
                 ]);
-                expect(this.context.events.executeHandlers.getCall(3).args).to.deep.equal([
+                expect(this.context.events.execute.getCall(3).args).to.deep.equal([
                     "after",
                     "break"
                 ]);
@@ -108,25 +102,25 @@ describe("transition", function() {
         it("fails immediately if the machine is in pending state", function() {
             this.context.pending = true;
             expect(() => {
-                transitionStateMachine(this.context, "break");
+                transition(this.context, "break");
             }).to.throw(/Currently pending a transition from state: ok/i);
         });
 
         it("fails immediately if a path is requested that doesn't exist", function() {
             this.context.state = "invulnerable";
             expect(() => {
-                transitionStateMachine(this.context, "break");
+                transition(this.context, "break");
             }).to.throw(/No transition path found for action 'break' \(state: invulnerable\)/i);
         });
 
         it("supports cancellations in 'before' event callbacks (return value)", function() {
-            this.context.events.executeHandlers.callsFake((type, target) => {
+            this.context.events.execute.callsFake((type, target) => {
                 if (type === "before") {
                     return Promise.resolve(false);
                 }
                 return Promise.resolve();
             });
-            return expect(transitionStateMachine(this.context, "break"))
+            return expect(transition(this.context, "break"))
                 .to.eventually.equal(false)
                 .then(() => {
                     expect(this.context.state).to.equal("ok");
@@ -134,13 +128,13 @@ describe("transition", function() {
         });
 
         it("supports cancellations in 'before' event callbacks (rejection)", function() {
-            this.context.events.executeHandlers.callsFake((type, target) => {
+            this.context.events.execute.callsFake((type, target) => {
                 if (type === "before") {
                     return Promise.reject(new Error("Some internal error"));
                 }
                 return Promise.resolve();
             });
-            return expect(transitionStateMachine(this.context, "break"))
+            return expect(transition(this.context, "break"))
                 .to.be.rejectedWith(/Some internal error/)
                 .then(() => {
                     expect(this.context.state).to.equal("ok");
@@ -148,13 +142,13 @@ describe("transition", function() {
         });
 
         it("supports cancellations in 'leave' event callbacks (return value)", function() {
-            this.context.events.executeHandlers.callsFake((type, target) => {
+            this.context.events.execute.callsFake((type, target) => {
                 if (type === "leave") {
                     return Promise.resolve(false);
                 }
                 return Promise.resolve();
             });
-            return expect(transitionStateMachine(this.context, "break"))
+            return expect(transition(this.context, "break"))
                 .to.eventually.equal(false)
                 .then(() => {
                     expect(this.context.state).to.equal("ok");
@@ -162,13 +156,13 @@ describe("transition", function() {
         });
 
         it("supports cancellations in 'leave' event callbacks (rejection)", function() {
-            this.context.events.executeHandlers.callsFake((type, target) => {
+            this.context.events.execute.callsFake((type, target) => {
                 if (type === "leave") {
                     return Promise.reject(new Error("Some internal error"));
                 }
                 return Promise.resolve();
             });
-            return expect(transitionStateMachine(this.context, "break"))
+            return expect(transition(this.context, "break"))
                 .to.be.rejectedWith(/Some internal error/)
                 .then(() => {
                     expect(this.context.state).to.equal("ok");

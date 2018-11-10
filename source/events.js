@@ -27,10 +27,10 @@ function callbackToPromise(callback) {
         });
 }
 
-function createEventsInterface() {
+function createInterface() {
     const handlers = [];
     const events = {
-        addHandler: (event, stateOrTransition, callback, { once = false } = {}) => {
+        add: (event, stateOrTransition, callback, { once = false } = {}) => {
             handlers.push({
                 type: resolveEventType(event),
                 value: stateOrTransition,
@@ -38,10 +38,10 @@ function createEventsInterface() {
                 once
             });
             return {
-                remove: () => events.removeHandler(event, stateOrTransition, callback)
+                remove: () => events.remove(event, stateOrTransition, callback)
             };
         },
-        executeHandlers: (event, stateOrTransition) => {
+        execute: (event, stateOrTransition) => {
             const type = resolveEventType(event);
             const work = handlers.filter(
                 item => item.item === type && item.value === stateOrTransition
@@ -53,7 +53,7 @@ function createEventsInterface() {
                 }
                 return callbackToPromise(item.callback).then(result => {
                     if (item.once === true) {
-                        events.removeHandler(event, stateOrTransition, item.callback);
+                        events.remove(event, stateOrTransition, item.callback);
                     }
                     if (result === false) {
                         // cancel transition
@@ -63,7 +63,7 @@ function createEventsInterface() {
                 });
             })();
         },
-        removeHandler: (event, stateOrTransition, callback) => {
+        remove: (event, stateOrTransition, callback) => {
             const type = resolveEventType(event);
             const handerInd = find(
                 handlers,
@@ -90,9 +90,9 @@ function resolveEventType(event) {
     } else if (EVENT_TYPE_TRANSITION_REXP.test(event)) {
         return EVENT_TYPE_TRANSITION;
     }
-    throw new Error(`Failed resolving event type: unrecognised event prefix: ${event}`);
+    throw new Error(`Failed resolving event type: unrecognised prefix: ${event}`);
 }
 
 module.exports = {
-    createEventsInterface
+    createInterface
 };

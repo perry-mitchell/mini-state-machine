@@ -1,6 +1,6 @@
-const { generatePaths, transitionStateMachine, verifyTransitions } = require("./transition.js");
+const { generatePaths, transition, verifyTransitions } = require("./transition.js");
 const { getState } = require("./state.js");
-const { createEventsInterface } = require("./events.js");
+const { createInterface: createEventsInterface } = require("./events.js");
 
 /**
  * @typedef {Object} Transition
@@ -34,7 +34,7 @@ const { createEventsInterface } = require("./events.js");
  */
 function createStateMachine({ initial, transitions } = {}) {
     if (!initial || initial.length <= 0) {
-        throw new Error(`Failed instantiating state machine: Invalid initial state: ${initial}`);
+        throw new Error(`Invalid initial state: ${initial}`);
     }
     verifyTransitions(transitions);
     const scope = {
@@ -50,11 +50,11 @@ function createStateMachine({ initial, transitions } = {}) {
         get state() {
             return getState(scope);
         },
-        off: (event, stateOrTransition, cb) => events.removeHandler(event, stateOrTransition, cb),
-        on: (event, stateOrTransition, cb) => events.addHandler(event, stateOrTransition, cb),
+        off: (event, stateOrTransition, cb) => events.remove(event, stateOrTransition, cb),
+        on: (event, stateOrTransition, cb) => events.add(event, stateOrTransition, cb),
         once: (event, stateOrTransition, cb) =>
-            events.addHandler(event, stateOrTransition, cb, { once: true }),
-        transition: action => transitionStateMachine(scope, action)
+            events.add(event, stateOrTransition, cb, { once: true }),
+        transition: action => transition(scope, action)
     };
 }
 
