@@ -53,25 +53,34 @@ function transitionStateMachine(context, action) {
         .executeHandlers("before", transitionName)
         .then(result => {
             if (result === false) {
-                throw new Error(
+                const err = new Error(
                     `Failed transitioning: before event handler cancelled transition: ${transErrorMsg}`
                 );
+                err.code = "TRANSITION_CANCELLED";
+                throw err;
             }
             return context.events.executeHandlers("leave", fromState);
         })
         .then(result => {
             if (result === false) {
-                throw new Error(
+                const err = new Error(
                     `Failed transitioning: leave event handler cancelled transition: ${transErrorMsg}`
                 );
+                err.code = "TRANSITION_CANCELLED";
+                throw err;
             }
             // state change now
             context.state = toState;
+            context.pending = false;
         })
         .then(() => context.events.executeHandlers("enter", toState))
         .then(() => context.events.executeHandlers("after", transitionName))
+        .then(() => true)
         .catch(err => {
             context.pending = false;
+            if (err.code === "TRANSITION_CANCELLED") {
+                return false;
+            }
             throw err;
         });
 }
