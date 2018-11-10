@@ -66,6 +66,8 @@ npm install mini-state-machine --save
 
 _This library supports **NodeJS 6** as a minimum compatible version_.
 
+Check out the [API documentation](API.md) for more information.
+
 ### Usage in the browser
 
 The default `main` path in the `package.json` is for Node, but a precompiled web version can be had at `mini-state-machine/dist/msm.web.js`. The web version uses the UMD package system, and exports a library called `MSM`. You can use `MSM.createStateMachine` to create state machines.
