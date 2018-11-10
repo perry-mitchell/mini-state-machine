@@ -1,8 +1,11 @@
 const path = require("path");
+const rimraf = require("rimraf").sync;
 
 const SOURCE = path.resolve(__dirname, "./source");
 const DIST = path.resolve(__dirname, "./dist");
 const ENTRY = path.join(SOURCE, "index.js");
+
+rimraf(DIST);
 
 module.exports = [
     {
