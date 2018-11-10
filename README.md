@@ -56,6 +56,19 @@ _By throwing an error, the original `transition()` call will be rejected with th
 
 The methods `off(type, stateOrTransitionName, callback)` and `once(type, stateOrTransitionName, callback)` are also available and function like normal event emitter properties. `on()` and `once` also return an Object that contains a `remove` property method, which removes the listener when called.
 
+Check out the [API documentation](API.md) for more information.
+
+#### Event Lifecycle
+
+The events for a transition occur in the following order:
+
+ * **before** _transition_ (cancelable)
+ * **leave** _state_ (cancelable)
+ * **enter** _state_
+ * **after** _transition_
+
+Returning a `Promise` in any of these delays the transition.
+
 ## Installation
 
 Run the following to install:
@@ -65,8 +78,6 @@ npm install mini-state-machine --save
 ```
 
 _This library supports **NodeJS 6** as a minimum compatible version_.
-
-Check out the [API documentation](API.md) for more information.
 
 ### Usage in the browser
 
