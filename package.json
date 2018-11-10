@@ -2,7 +2,7 @@
   "name": "mini-state-machine",
   "version": "0.0.0",
   "description": "A miniature state machine",
-  "main": "source/index.js",
+  "main": "dist/msm.node.js",
   "scripts": {
     "build": "webpack --mode production --config webpack.config.js",
     "format": "prettier --write '{source,test}/**/*.js'",
@@ -20,6 +20,9 @@
       "git add"
     ]
   },
+  "files": [
+    "dist/**/*.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/perry-mitchell/mini-state-machine.git"
