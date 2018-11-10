@@ -24,3 +24,7 @@ function createStateMachine({ initial, transitions } = {}) {
         transition: action => transitionStateMachine(scope, action)
     };
 }
+
+module.exports = {
+    createStateMachine
+};
