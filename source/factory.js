@@ -1,4 +1,4 @@
-const { generatePaths, transition, verifyTransitions } = require("./transition.js");
+const { generatePaths, getPath, transition, verifyTransitions } = require("./transition.js");
 const { getState } = require("./state.js");
 const { createInterface: createEventsInterface } = require("./events.js");
 
@@ -37,25 +37,29 @@ function createStateMachine({ initial, transitions } = {}) {
         throw new Error(`Invalid initial state: ${initial}`);
     }
     verifyTransitions(transitions);
-    const scope = {
+    const context = {
         events: createEventsInterface(),
         paths: generatePaths(transitions),
         pending: false,
         state: initial
     };
-    return {
+    const sm = {
         get pending() {
-            return scope.pending;
+            return context.pending;
         },
         get state() {
-            return getState(scope);
+            return getState(context);
         },
+        can: transition => !!getPath(context, transition),
+        cannot: transition => !sm.can(transition),
+        is: state => sm.state === state,
         off: (event, stateOrTransition, cb) => events.remove(event, stateOrTransition, cb),
         on: (event, stateOrTransition, cb) => events.add(event, stateOrTransition, cb),
         once: (event, stateOrTransition, cb) =>
             events.add(event, stateOrTransition, cb, { once: true }),
-        transition: action => transition(scope, action)
+        transition: action => transition(context, action)
     };
+    return sm;
 }
 
 module.exports = {
