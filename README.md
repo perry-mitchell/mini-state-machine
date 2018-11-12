@@ -58,6 +58,12 @@ The methods `off(type, stateOrTransitionName, callback)` and `once(type, stateOr
 
 Check out the [API documentation](API.md) for more information.
 
+#### Checking State
+
+You can check the current state by using `sm.state`. For convenience you can also use `sm.is("someState")`.
+
+You can also check whether a transition is possible by calling `sm.can("show")`, or if it is impossible by calling `sm.cannot("hide")`.
+
 #### Event Lifecycle
 
 The events for a transition occur in the following order:
