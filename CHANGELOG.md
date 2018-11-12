@@ -1,5 +1,10 @@
 # Mini-State-Machine Changelog
 
+## v0.3.0
+_2018-11-12_
+
+ * Add `can`, `cannot` and `is` methods
+
 ## v0.2.0
 _2018-11-10_
 

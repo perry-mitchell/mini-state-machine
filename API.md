@@ -64,6 +64,9 @@ Create a state machine instance
 | --- | --- | --- |
 | pending | <code>Boolean</code> | Whether a transition is currently pending or not |
 | state | <code>String</code> | The current state the machine is in |
+| can | <code>function</code> | Check if a transition is possible |
+| cannot | <code>function</code> | Check if a transition is not possible |
+| is | <code>function</code> | Check if the machine is in a state |
 | off | <code>function</code> | Turn a event listener off (remove) |
 | on | <code>function</code> | Attach an event listener |
 | once | <code>function</code> | Attach a single-use event listener |

@@ -20,6 +20,9 @@ const { createInterface: createEventsInterface } = require("./events.js");
  * @typedef {Object} StateMachine
  * @property {Boolean} pending - Whether a transition is currently pending or not
  * @property {String} state - The current state the machine is in
+ * @property {Function} can - Check if a transition is possible
+ * @property {Function} cannot - Check if a transition is not possible
+ * @property {Function} is - Check if the machine is in a state
  * @property {Function} off - Turn a event listener off (remove)
  * @property {Function} on - Attach an event listener
  * @property {Function} once - Attach a single-use event listener
