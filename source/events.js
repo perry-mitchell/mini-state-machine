@@ -41,11 +41,14 @@ function createInterface() {
                 remove: () => events.remove(event, stateOrTransition, callback)
             };
         },
-        execute: (event, stateOrTransition) => {
+        execute: (event, stateOrTransition, parallelExecution = false) => {
             const type = resolveEventType(event);
             const work = handlers.filter(
                 item => item.item === type && item.value === stateOrTransition
             );
+            if (parallelExecution) {
+                return Promise.all(work.map(item => callbackToPromise(item.callback)));
+            }
             return (function doNext() {
                 const item = work.shift();
                 if (!item) {

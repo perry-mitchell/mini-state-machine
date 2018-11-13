@@ -78,11 +78,10 @@ describe("transition", function() {
 
         it("calls all event handlers in the correct order", function() {
             return transition(this.context, "break").then(() => {
-                expect(this.context.events.execute.calledWithExactly("before", "break")).to.be.true;
-                expect(this.context.events.execute.calledWithExactly("after", "break")).to.be.true;
-                expect(this.context.events.execute.calledWithExactly("leave", "ok")).to.be.true;
-                expect(this.context.events.execute.calledWithExactly("enter", "damaged")).to.be
-                    .true;
+                expect(this.context.events.execute.calledWith("before", "break")).to.be.true;
+                expect(this.context.events.execute.calledWith("after", "break")).to.be.true;
+                expect(this.context.events.execute.calledWith("leave", "ok")).to.be.true;
+                expect(this.context.events.execute.calledWith("enter", "damaged")).to.be.true;
                 expect(this.context.events.execute.getCall(0).args).to.deep.equal([
                     "before",
                     "break"
@@ -90,11 +89,13 @@ describe("transition", function() {
                 expect(this.context.events.execute.getCall(1).args).to.deep.equal(["leave", "ok"]);
                 expect(this.context.events.execute.getCall(2).args).to.deep.equal([
                     "enter",
-                    "damaged"
+                    "damaged",
+                    true // parallel
                 ]);
                 expect(this.context.events.execute.getCall(3).args).to.deep.equal([
                     "after",
-                    "break"
+                    "break",
+                    true // parallel
                 ]);
             });
         });

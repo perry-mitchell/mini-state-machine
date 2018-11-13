@@ -74,8 +74,8 @@ function transition(context, action) {
             context.state = toState;
             context.pending = false;
         })
-        .then(() => context.events.execute("enter", toState))
-        .then(() => context.events.execute("after", transitionName))
+        .then(() => context.events.execute("enter", toState, /* parallel: */ true))
+        .then(() => context.events.execute("after", transitionName, /* parallel: */ true))
         .then(() => true)
         .catch(err => {
             context.pending = false;
