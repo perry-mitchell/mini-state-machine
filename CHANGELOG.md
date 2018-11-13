@@ -1,5 +1,10 @@
 # Mini-State-Machine Changelog
 
+## v0.3.1
+_2018-11-13_
+
+ * Execute enter-state and after-transition callbacks in parallel
+
 ## v0.3.0
 _2018-11-12_
 

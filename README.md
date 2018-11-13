@@ -73,7 +73,9 @@ The events for a transition occur in the following order:
  * **enter** _state_
  * **after** _transition_
 
-Returning a `Promise` in any of these delays the transition.
+Returning a `Promise` in any of these delays the transition. The callbacks for before-transition and leave-state processes are called serially, which means that a failure or delay in one will affect the following callbacks (a failure meaning that they will not be called at all). The callbacks for enter-state and after-transition, however, are called in a parallel manner so that they do not delay or affect each other.
+
+The exact time at which the state is changed is between **leave-state** and **enter-state**, and once the enter-state procedure has been started it is already to late to cancel the transition.
 
 ## Installation
 
