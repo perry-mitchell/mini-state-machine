@@ -32,6 +32,7 @@ function callbackToPromise(callback, ...args) {
 function createInterface() {
     const handlers = [];
     const events = {
+        "@@handlers": handlers,
         add: (event, stateOrTransition, callback, { once = false } = {}) => {
             handlers.push({
                 event,
@@ -78,7 +79,8 @@ function createInterface() {
                 handlers,
                 item => {
                     return (
-                        item.item === type &&
+                        item.event === event &&
+                        item.type === type &&
                         item.value === stateOrTransition &&
                         item.callback === callback
                     );
