@@ -5,11 +5,11 @@ const EVENT_TYPE_STATE_REXP = /^(enter|leave)/;
 const EVENT_TYPE_TRANSITION = "t";
 const EVENT_TYPE_TRANSITION_REXP = /^(before|after)/;
 
-function callbackToPromise(callback) {
+function callbackToPromise(callback, ...args) {
     let output,
         uncaught = null;
     try {
-        output = callback();
+        output = callback(...args);
     } catch (err) {
         uncaught = err;
         output = false;
@@ -20,9 +20,11 @@ function callbackToPromise(callback) {
             return false;
         })
         .then(result => {
-            setTimeout(function __throwUnhandledException() {
-                throw uncaught;
-            }, 0);
+            if (uncaught !== null) {
+                setTimeout(function __throwUnhandledException() {
+                    throw uncaught;
+                }, 0);
+            }
             return result;
         });
 }
@@ -32,6 +34,7 @@ function createInterface() {
     const events = {
         add: (event, stateOrTransition, callback, { once = false } = {}) => {
             handlers.push({
+                event,
                 type: resolveEventType(event),
                 value: stateOrTransition,
                 callback,
@@ -41,20 +44,23 @@ function createInterface() {
                 remove: () => events.remove(event, stateOrTransition, callback)
             };
         },
-        execute: (event, stateOrTransition, parallelExecution = false) => {
+        execute: (event, stateOrTransition, { parallel = false, from, to, transition } = {}) => {
             const type = resolveEventType(event);
             const work = handlers.filter(
-                item => item.item === type && item.value === stateOrTransition
+                item =>
+                    item.type === type && item.event === event && item.value === stateOrTransition
             );
-            if (parallelExecution) {
-                return Promise.all(work.map(item => callbackToPromise(item.callback)));
+            if (parallel) {
+                return Promise.all(
+                    work.map(item => callbackToPromise(item.callback, { from, to, transition }))
+                );
             }
             return (function doNext() {
                 const item = work.shift();
                 if (!item) {
                     return Promise.resolve();
                 }
-                return callbackToPromise(item.callback).then(result => {
+                return callbackToPromise(item.callback, { from, to, transition }).then(result => {
                     if (item.once === true) {
                         events.remove(event, stateOrTransition, item.callback);
                     }

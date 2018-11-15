@@ -82,21 +82,22 @@ describe("transition", function() {
                 expect(this.context.events.execute.calledWith("after", "break")).to.be.true;
                 expect(this.context.events.execute.calledWith("leave", "ok")).to.be.true;
                 expect(this.context.events.execute.calledWith("enter", "damaged")).to.be.true;
-                expect(this.context.events.execute.getCall(0).args).to.deep.equal([
-                    "before",
-                    "break"
-                ]);
-                expect(this.context.events.execute.getCall(1).args).to.deep.equal(["leave", "ok"]);
-                expect(this.context.events.execute.getCall(2).args).to.deep.equal([
-                    "enter",
-                    "damaged",
-                    true // parallel
-                ]);
-                expect(this.context.events.execute.getCall(3).args).to.deep.equal([
-                    "after",
-                    "break",
-                    true // parallel
-                ]);
+                expect(this.context.events.execute.getCall(0).args[0]).to.equal("before");
+                expect(this.context.events.execute.getCall(0).args[1]).to.equal("break");
+                expect(this.context.events.execute.getCall(1).args[0]).to.equal("leave");
+                expect(this.context.events.execute.getCall(1).args[1]).to.equal("ok");
+                expect(this.context.events.execute.getCall(2).args[0]).to.equal("enter");
+                expect(this.context.events.execute.getCall(2).args[1]).to.equal("damaged");
+                expect(this.context.events.execute.getCall(2).args[2]).to.have.property(
+                    "parallel",
+                    true
+                );
+                expect(this.context.events.execute.getCall(3).args[0]).to.equal("after");
+                expect(this.context.events.execute.getCall(3).args[1]).to.equal("break");
+                expect(this.context.events.execute.getCall(3).args[2]).to.have.property(
+                    "parallel",
+                    true
+                );
             });
         });
 

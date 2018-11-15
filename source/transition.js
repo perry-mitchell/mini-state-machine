@@ -51,7 +51,11 @@ function transition(context, action) {
     const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
     context.pending = true;
     return context.events
-        .execute("before", transitionName)
+        .execute("before", transitionName, {
+            from: fromState,
+            to: toState,
+            transition: transitionName
+        })
         .then(result => {
             if (result === false) {
                 const err = new Error(
@@ -60,7 +64,11 @@ function transition(context, action) {
                 err.code = ERR_CODE_TRANSITION_CANCELLED;
                 throw err;
             }
-            return context.events.execute("leave", fromState);
+            return context.events.execute("leave", fromState, {
+                from: fromState,
+                to: toState,
+                transition: transitionName
+            });
         })
         .then(result => {
             if (result === false) {
@@ -74,8 +82,22 @@ function transition(context, action) {
             context.state = toState;
             context.pending = false;
         })
-        .then(() => context.events.execute("enter", toState, /* parallel: */ true))
-        .then(() => context.events.execute("after", transitionName, /* parallel: */ true))
+        .then(() =>
+            context.events.execute("enter", toState, {
+                parallel: true,
+                from: fromState,
+                to: toState,
+                transition: transitionName
+            })
+        )
+        .then(() =>
+            context.events.execute("after", transitionName, {
+                parallel: true,
+                from: fromState,
+                to: toState,
+                transition: transitionName
+            })
+        )
         .then(() => true)
         .catch(err => {
             context.pending = false;

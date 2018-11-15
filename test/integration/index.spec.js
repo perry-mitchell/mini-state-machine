@@ -79,5 +79,49 @@ describe("MSM", function() {
                     expect(sm.state).to.equal("ok");
                 });
         });
+
+        it("fires correct event properties for 'before' event", function(done) {
+            const sm = createStateMachine1();
+            sm.once("before", "break", info => {
+                expect(info).to.have.property("from", "ok");
+                expect(info).to.have.property("to", "damaged");
+                expect(info).to.have.property("transition", "break");
+                done();
+            });
+            sm.transition("break");
+        });
+
+        it("fires correct event properties for 'after' event", function(done) {
+            const sm = createStateMachine1();
+            sm.once("after", "break", info => {
+                expect(info).to.have.property("from", "ok");
+                expect(info).to.have.property("to", "damaged");
+                expect(info).to.have.property("transition", "break");
+                done();
+            });
+            sm.transition("break");
+        });
+
+        it("fires correct event properties for 'leave' event", function(done) {
+            const sm = createStateMachine1();
+            sm.once("leave", "ok", info => {
+                expect(info).to.have.property("from", "ok");
+                expect(info).to.have.property("to", "damaged");
+                expect(info).to.have.property("transition", "break");
+                done();
+            });
+            sm.transition("break");
+        });
+
+        it("fires correct event properties for 'enter' event", function(done) {
+            const sm = createStateMachine1();
+            sm.once("enter", "damaged", info => {
+                expect(info).to.have.property("from", "ok");
+                expect(info).to.have.property("to", "damaged");
+                expect(info).to.have.property("transition", "break");
+                done();
+            });
+            sm.transition("break");
+        });
     });
 });

@@ -56,10 +56,10 @@ function createStateMachine({ initial, transitions } = {}) {
         can: transition => !!getPath(context, transition),
         cannot: transition => !sm.can(transition),
         is: state => sm.state === state,
-        off: (event, stateOrTransition, cb) => events.remove(event, stateOrTransition, cb),
-        on: (event, stateOrTransition, cb) => events.add(event, stateOrTransition, cb),
+        off: (event, stateOrTransition, cb) => context.events.remove(event, stateOrTransition, cb),
+        on: (event, stateOrTransition, cb) => context.events.add(event, stateOrTransition, cb),
         once: (event, stateOrTransition, cb) =>
-            events.add(event, stateOrTransition, cb, { once: true }),
+            context.events.add(event, stateOrTransition, cb, { once: true }),
         transition: action => transition(context, action)
     };
     return sm;
