@@ -1,5 +1,10 @@
 # Mini-State-Machine Changelog
 
+## v0.3.2
+_2018-11-15_
+
+ * **Bugfix**: `on`/`once`/`off` event handlers throwing errors and not working
+
 ## v0.3.1
 _2018-11-13_
 
