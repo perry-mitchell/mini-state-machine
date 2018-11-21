@@ -105,7 +105,7 @@ describe("transition", function() {
             this.context.pending = true;
             expect(() => {
                 transition(this.context, "break");
-            }).to.throw(/Currently pending a transition from state: ok/i);
+            }).to.throw(/Currently pending a transition: ok/i);
         });
 
         it("fails immediately if a path is requested that doesn't exist", function() {

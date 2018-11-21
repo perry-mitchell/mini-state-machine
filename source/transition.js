@@ -36,10 +36,7 @@ function getPath(context, action) {
 
 function transition(context, action) {
     const state = getState(context);
-    const errorPrefix = "Failed transitioning";
-    if (context.pending) {
-        throw new Error(`${errorPrefix}: Currently pending a transition from state: ${state}`);
-    }
+    const errorPrefix = `Failed transitioning (${action})`;
     const path = getPath(context, action);
     if (!path) {
         const state = getState(context);
@@ -48,8 +45,14 @@ function transition(context, action) {
         );
     }
     const { name: transitionName, from: fromState, to: toState } = path;
+    if (context.pending) {
+        throw new Error(
+            `${errorPrefix}: Currently pending a transition: ${fromState} => ${toState}`
+        );
+    }
     const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
     context.pending = true;
+    context.next = toState;
     return context.events
         .execute("before", transitionName, {
             from: fromState,
@@ -81,6 +84,7 @@ function transition(context, action) {
             // state change now
             context.state = toState;
             context.pending = false;
+            context.next = null;
         })
         .then(() =>
             context.events.execute("enter", toState, {

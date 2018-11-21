@@ -44,7 +44,8 @@ function createStateMachine({ initial, transitions } = {}) {
         events: createEventsInterface(),
         paths: generatePaths(transitions),
         pending: false,
-        state: initial
+        state: initial,
+        next: null
     };
     const sm = {
         get pending() {
