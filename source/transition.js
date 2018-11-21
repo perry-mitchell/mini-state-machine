@@ -51,14 +51,9 @@ function transition(context, action) {
         );
     }
     const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
+    const tsStart = Date.now();
     context.pending = true;
     context.next = toState;
-    context.history.push({
-        ts: Date.now(),
-        state: toState,
-        previous: fromState,
-        transition: transitionName
-    });
     return context.events
         .execute("before", transitionName, {
             from: fromState,
@@ -91,6 +86,13 @@ function transition(context, action) {
             context.state = toState;
             context.pending = false;
             context.next = null;
+            context.history.push({
+                tsStart,
+                tsEnd: Date.now(),
+                state: toState,
+                previous: fromState,
+                transition: transitionName
+            });
         })
         .then(() =>
             context.events.execute("enter", toState, {

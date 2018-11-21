@@ -73,8 +73,12 @@ describe("MSM", function() {
             expect(history).to.have.length.above(0);
             history.forEach(item => {
                 expect(item)
-                    .to.have.property("ts")
+                    .to.have.property("tsStart")
                     .that.is.a("number");
+                expect(item)
+                    .to.have.property("tsEnd")
+                    .that.is.a("number")
+                    .and.is.at.least(item.tsStart);
                 expect(item)
                     .to.have.property("state")
                     .that.is.a("string");
