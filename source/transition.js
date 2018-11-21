@@ -53,6 +53,12 @@ function transition(context, action) {
     const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
     context.pending = true;
     context.next = toState;
+    context.history.push({
+        ts: Date.now(),
+        state: toState,
+        previous: fromState,
+        transition: transitionName
+    });
     return context.events
         .execute("before", transitionName, {
             from: fromState,

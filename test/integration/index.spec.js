@@ -56,6 +56,38 @@ describe("MSM", function() {
         });
     });
 
+    describe("getHistory", function() {
+        beforeEach(function() {
+            this.sm = createStateMachine1();
+            return Promise.resolve()
+                .then(() => this.sm.transition("break"))
+                .then(() => this.sm.transition("break"))
+                .then(() => this.sm.transition("fix"))
+                .then(() => this.sm.transition("break"))
+                .then(() => this.sm.transition("fix"));
+        });
+
+        it("returns an array of history items", function() {
+            const history = this.sm.getHistory();
+            expect(history).to.be.an("array");
+            expect(history).to.have.length.above(0);
+            history.forEach(item => {
+                expect(item)
+                    .to.have.property("ts")
+                    .that.is.a("number");
+                expect(item)
+                    .to.have.property("state")
+                    .that.is.a("string");
+                expect(item)
+                    .to.have.property("previous")
+                    .that.is.a("string");
+                expect(item)
+                    .to.have.property("transition")
+                    .that.is.a("string");
+            });
+        });
+    });
+
     describe("transition", function() {
         it("can transfer from state to state", function() {
             const sm = createStateMachine1();

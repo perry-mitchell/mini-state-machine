@@ -22,6 +22,7 @@ const { createInterface: createEventsInterface } = require("./events.js");
  * @property {String} state - The current state the machine is in
  * @property {Function} can - Check if a transition is possible
  * @property {Function} cannot - Check if a transition is not possible
+ * @property {Function} getHistory - Get the full transition history
  * @property {Function} is - Check if the machine is in a state
  * @property {Function} off - Turn a event listener off (remove)
  * @property {Function} on - Attach an event listener
@@ -45,7 +46,8 @@ function createStateMachine({ initial, transitions } = {}) {
         paths: generatePaths(transitions),
         pending: false,
         state: initial,
-        next: null
+        next: null,
+        history: []
     };
     const sm = {
         get pending() {
@@ -56,6 +58,7 @@ function createStateMachine({ initial, transitions } = {}) {
         },
         can: transition => !!getPath(context, transition),
         cannot: transition => !sm.can(transition),
+        getHistory: () => JSON.parse(JSON.stringify(context.history)),
         is: state => sm.state === state,
         off: (event, stateOrTransition, cb) => context.events.remove(event, stateOrTransition, cb),
         on: (event, stateOrTransition, cb) => context.events.add(event, stateOrTransition, cb),

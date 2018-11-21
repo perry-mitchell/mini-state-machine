@@ -65,7 +65,8 @@ describe("transition", function() {
                     execute: sinon.stub().callsFake(() => Promise.resolve())
                 },
                 pending: false,
-                state: "ok"
+                state: "ok",
+                history: []
             };
         });
 
