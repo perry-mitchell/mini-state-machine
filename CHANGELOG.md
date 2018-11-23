@@ -1,5 +1,12 @@
 # Mini-State-Machine Changelog
 
+## v0.4.0
+_2018-11-23_
+
+ * Listen to all events by using "*" for the `stateOrTransition` value
+ * Added `getHistory()` for fetching historical transitions
+ * Improved error messages
+
 ## v0.3.2
 _2018-11-15_
 
