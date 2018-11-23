@@ -91,6 +91,13 @@ Check if the state machine can perform a transition
 | --- | --- | --- |
 | transition | <code>String</code> | The transition name to check |
 
+**Example**  
+```js
+if (sm.can("show")) {
+     console.log("About to show!");
+     sm.transition("show");
+ }
+```
 <a name="StateMachine.cannot"></a>
 
 ### StateMachine.cannot(transition) ⇒ <code>Boolean</code>
@@ -122,6 +129,14 @@ Test if the state machine is in a particular state
 | --- | --- | --- |
 | state | <code>String</code> | The state to check |
 
+**Example**  
+```js
+if (sm.is("shown")) {
+     sm.transition("prepare");
+ } else {
+     sm.transition("show");
+ }
+```
 <a name="StateMachine.off"></a>
 
 ### StateMachine.off(event, stateOrTransition, cb)
@@ -135,6 +150,14 @@ Turn off an event listener
 | stateOrTransition | <code>String</code> | The state or transition name to turn off the listener for |
 | cb | <code>function</code> | The calback that was passed to `on` or `once` |
 
+**Example**  
+```js
+// Earlier:
+ const callback = () => {};
+ sm.on("leave", "hidden", callback);
+ // Later:
+ sm.off("leave", "hidden", callback);
+```
 <a name="StateMachine.on"></a>
 
 ### StateMachine.on(event, stateOrTransition, cb) ⇒ [<code>AttachedEventHandlerResult</code>](#AttachedEventHandlerResult)
@@ -149,6 +172,13 @@ Attach (turn on) an event listener for a particular event
 | stateOrTransition | <code>String</code> | The state or transition name to attach a listener on |
 | cb | <code>function</code> | The callback to attach |
 
+**Example**  
+```js
+// Attach an event listener, and record the return value for later use
+ const handler = sm.on("before", "show", () => {});
+ // Attached handler can also be removed later:
+ handler.remove();
+```
 <a name="StateMachine.once"></a>
 
 ### StateMachine.once(event, stateOrTransition, cb) ⇒ [<code>AttachedEventHandlerResult</code>](#AttachedEventHandlerResult)
@@ -157,6 +187,7 @@ This event, once caught, will clear the attached handler.
 
 **Kind**: static method of [<code>StateMachine</code>](#StateMachine)  
 **Returns**: [<code>AttachedEventHandlerResult</code>](#AttachedEventHandlerResult) - An event handler control adapter  
+**See**: StateMachine#on  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -176,6 +207,10 @@ Perform a state transition
 | --- | --- | --- |
 | action | <code>String</code> | The action to perform which will result in a transition |
 
+**Example**  
+```js
+await sm.transition("hide");
+```
 <a name="Transition"></a>
 
 ## Transition : <code>Object</code>

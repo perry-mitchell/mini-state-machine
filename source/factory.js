@@ -83,6 +83,11 @@ function createStateMachine({ initial, transitions } = {}) {
          * @param {String} transition The transition name to check
          * @returns {Boolean} True if the transition can be performed, false otherwise
          * @memberof StateMachine
+         * @example
+         *  if (sm.can("show")) {
+         *      console.log("About to show!");
+         *      sm.transition("show");
+         *  }
          */
         can: transition => !!getPath(context, transition),
         /**
@@ -103,6 +108,12 @@ function createStateMachine({ initial, transitions } = {}) {
          * @param {String} state The state to check
          * @returns {Boolean} True if it is in the mentioned state
          * @memberof StateMachine
+         * @example
+         *  if (sm.is("shown")) {
+         *      sm.transition("prepare");
+         *  } else {
+         *      sm.transition("show");
+         *  }
          */
         is: state => sm.state === state,
         /**
@@ -111,6 +122,12 @@ function createStateMachine({ initial, transitions } = {}) {
          * @param {String} stateOrTransition The state or transition name to turn off the listener for
          * @param {Function} cb The calback that was passed to `on` or `once`
          * @memberof StateMachine
+         * @example
+         *  // Earlier:
+         *  const callback = () => {};
+         *  sm.on("leave", "hidden", callback);
+         *  // Later:
+         *  sm.off("leave", "hidden", callback);
          */
         off: (event, stateOrTransition, cb) => context.events.remove(event, stateOrTransition, cb),
         /**
@@ -120,6 +137,11 @@ function createStateMachine({ initial, transitions } = {}) {
          * @param {Function} cb The callback to attach
          * @returns {AttachedEventHandlerResult} An event handler control adapter
          * @memberof StateMachine
+         * @example
+         *  // Attach an event listener, and record the return value for later use
+         *  const handler = sm.on("before", "show", () => {});
+         *  // Attached handler can also be removed later:
+         *  handler.remove();
          */
         on: (event, stateOrTransition, cb) => context.events.add(event, stateOrTransition, cb),
         /**
@@ -130,6 +152,7 @@ function createStateMachine({ initial, transitions } = {}) {
          * @param {Function} cb The callback to attach
          * @returns {AttachedEventHandlerResult} An event handler control adapter
          * @memberof StateMachine
+         * @see StateMachine#on
          */
         once: (event, stateOrTransition, cb) =>
             context.events.add(event, stateOrTransition, cb, { once: true }),
@@ -138,6 +161,8 @@ function createStateMachine({ initial, transitions } = {}) {
          * @param {String} action The action to perform which will result in a transition
          * @returns {Promise} A promise that resolves once the transition is complete
          * @memberof StateMachine
+         * @example
+         *  await sm.transition("hide");
          */
         transition: action => transition(context, action)
     };
