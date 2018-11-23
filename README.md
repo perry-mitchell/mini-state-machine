@@ -7,6 +7,23 @@
 
 State machines are extremely useful pieces of functionality that ensure some state of a custom system. Using state machines (or _Finite State Machines_) allows you to define states for a system and all possible transitions between those states, ensuring the system follows only a certain amount of paths between states. An attempt to deviate from the allowed paths will always result in an error (as well as the initial state being preserved).
 
+State machines such as this one can help you map out your states and transition pathways:
+
+![State machine visualisation](mini-state-machine.jpg)
+
+Such a diagram can easily be modelled as a state machine using this library:
+
+```javascript
+createStateMachine({
+    initial: "idle",
+    transitions: [
+        { name: "prepare", from: "idle", to: "hidden" },
+        { name: "show", from: "hidden", to: "shown" },
+        { name: "hide", from: "shown", to: "hidden" }
+    ]
+});
+```
+
 ### Why
 
 Existing solutions were a bit too bloated for my use case - I needed a small and functional state machine with asynchronous transitions. Mini-State-Machine is my take on the bare minimum. If you have suggestions on how I could make it smaller, please create an issue!
