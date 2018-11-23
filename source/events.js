@@ -56,7 +56,9 @@ function createInterface() {
             const type = resolveEventType(event);
             const work = handlers.filter(
                 item =>
-                    item.type === type && item.event === event && item.value === stateOrTransition
+                    item.type === type &&
+                    item.event === event &&
+                    (item.value === stateOrTransition || item.value === "*")
             );
             if (parallel) {
                 return Promise.all(

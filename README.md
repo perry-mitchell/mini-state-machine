@@ -56,6 +56,19 @@ _By throwing an error, the original `transition()` call will be rejected with th
 
 The methods `off(type, stateOrTransitionName, callback)` and `once(type, stateOrTransitionName, callback)` are also available and function like normal event emitter properties. `on()` and `once` also return an Object that contains a `remove` property method, which removes the listener when called.
 
+You can also listen to all events by using an asterisk:
+
+```javascript
+sm.on("after", "*", event => {
+    // 'event' :
+    // {
+    //     from: "state1",
+    //     to: "state2",
+    //     transition: "doSomething"
+    // }
+});
+```
+
 Check out the [API documentation](API.md) for more information.
 
 #### Checking State

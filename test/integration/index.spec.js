@@ -92,6 +92,42 @@ describe("MSM", function() {
         });
     });
 
+    describe("on", function() {
+        it("can be used with '*' to listen to all transitions", function() {
+            const sm = createStateMachine1();
+            const cb = sinon.spy();
+            sm.on("after", "*", cb);
+            return Promise.resolve()
+                .then(() => sm.transition("break"))
+                .then(() => sm.transition("break"))
+                .then(() => sm.transition("fix"))
+                .then(() => {
+                    expect(cb.callCount).to.equal(3);
+                    expect(cb.firstCall.args).to.deep.equal([
+                        {
+                            from: "ok",
+                            to: "damaged",
+                            transition: "break"
+                        }
+                    ]);
+                    expect(cb.secondCall.args).to.deep.equal([
+                        {
+                            from: "damaged",
+                            to: "broken",
+                            transition: "break"
+                        }
+                    ]);
+                    expect(cb.thirdCall.args).to.deep.equal([
+                        {
+                            from: "broken",
+                            to: "ok",
+                            transition: "fix"
+                        }
+                    ]);
+                });
+        });
+    });
+
     describe("transition", function() {
         it("can transfer from state to state", function() {
             const sm = createStateMachine1();
