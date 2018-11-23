@@ -41,7 +41,14 @@ function createInterface() {
                 callback,
                 once
             });
+            /**
+             * @class AttachedEventHandlerResult
+             */
             return {
+                /**
+                 * Remove the event handler
+                 * @memberof AttachedEventHandlerResult
+                 */
                 remove: () => events.remove(event, stateOrTransition, callback)
             };
         },
