@@ -64,6 +64,20 @@ You can check the current state by using `sm.state`. For convenience you can als
 
 You can also check whether a transition is possible by calling `sm.can("show")`, or if it is impossible by calling `sm.cannot("hide")`.
 
+#### History
+
+You can get the entire history of the state machine by calling `sm.getHistory()`. This method is expensive as it clones (using JSON) the entire history collection before returning it.
+
+Each history item will conform to the following structure:
+
+| Property      | Type          | Description                                |
+|---------------|---------------|--------------------------------------------|
+| tsStart       | Number        | The timestamp at which the transition started. |
+| tsEnd         | Number        | The timestamp at which the transition ended. |
+| state         | String        | The state that was set at the end of the transition. |
+| previous      | String        | The previous state before the transition.  |
+| transition    | String        | The transition name.                       |
+
 #### Event Lifecycle
 
 The events for a transition occur in the following order:
