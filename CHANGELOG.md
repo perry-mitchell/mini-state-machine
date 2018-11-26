@@ -1,5 +1,10 @@
 # Mini-State-Machine Changelog
 
+## v0.4.1
+_2018-11-26_
+
+ * **Bugfix**: Transitioning when in pending state error message showed wrong _to-state_
+
 ## v0.4.0
 _2018-11-23_
 
