@@ -104,9 +104,10 @@ describe("transition", function() {
 
         it("fails immediately if the machine is in pending state", function() {
             this.context.pending = true;
+            this.context.next = "damaged";
             expect(() => {
                 transition(this.context, "break");
-            }).to.throw(/Currently pending a transition: ok/i);
+            }).to.throw(/Currently pending a transition: ok => damaged/i);
         });
 
         it("fails immediately if a path is requested that doesn't exist", function() {

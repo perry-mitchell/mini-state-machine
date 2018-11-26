@@ -47,7 +47,7 @@ function transition(context, action) {
     const { name: transitionName, from: fromState, to: toState } = path;
     if (context.pending) {
         throw new Error(
-            `${errorPrefix}: Currently pending a transition: ${fromState} => ${toState}`
+            `${errorPrefix}: Currently pending a transition: ${state} => ${context.next}`
         );
     }
     const transErrorMsg = `${transitionName} (${fromState} => ${toState})`;
