@@ -62,7 +62,13 @@ function createInterface() {
             );
             if (parallel) {
                 return Promise.all(
-                    work.map(item => callbackToPromise(item.callback, { from, to, transition }))
+                    work.map(item =>
+                        callbackToPromise(item.callback, { from, to, transition }).then(() => {
+                            if (item.once === true) {
+                                events.remove(event, stateOrTransition, item.callback);
+                            }
+                        })
+                    )
                 );
             }
             return (function doNext() {
@@ -90,7 +96,7 @@ function createInterface() {
                     return (
                         item.event === event &&
                         item.type === type &&
-                        item.value === stateOrTransition &&
+                        (item.value === stateOrTransition || item.value === "*") &&
                         item.callback === callback
                     );
                 },

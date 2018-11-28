@@ -128,6 +128,28 @@ describe("MSM", function() {
         });
     });
 
+    describe("once", function() {
+        it("removes itself after first call", function() {
+            const sm = createStateMachine1();
+            const cb = sinon.spy();
+            sm.once("after", "*", cb);
+            return Promise.resolve()
+                .then(() => sm.transition("break"))
+                .then(() => sm.transition("break"))
+                .then(() => sm.transition("fix"))
+                .then(() => {
+                    expect(cb.calledOnce).to.be.true;
+                    expect(cb.firstCall.args).to.deep.equal([
+                        {
+                            from: "ok",
+                            to: "damaged",
+                            transition: "break"
+                        }
+                    ]);
+                });
+        });
+    });
+
     describe("transition", function() {
         it("can transfer from state to state", function() {
             const sm = createStateMachine1();
