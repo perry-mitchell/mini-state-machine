@@ -1,5 +1,10 @@
 # Mini-State-Machine Changelog
 
+## v0.4.2
+_2018-11-28_
+
+ * **Bugfix**: `once` would not clear callback after first call
+
 ## v0.4.1
 _2018-11-26_
 
