@@ -1,5 +1,10 @@
 # Mini-State-Machine Changelog
 
+## v1.0.0
+_2020-02-05_
+
+ * Remove parallel processing of state events, for simplicity
+
 ## v0.4.2
 _2018-11-28_
 
