@@ -129,7 +129,7 @@ Run the following to install:
 npm install mini-state-machine --save
 ```
 
-_This library supports **NodeJS 6** as a minimum compatible version_.
+_This library supports **NodeJS 10** as a minimum compatible version_.
 
 ### Usage in the browser
 
