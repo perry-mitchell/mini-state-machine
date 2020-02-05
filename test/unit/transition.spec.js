@@ -89,16 +89,8 @@ describe("transition", function() {
                 expect(this.context.events.execute.getCall(1).args[1]).to.equal("ok");
                 expect(this.context.events.execute.getCall(2).args[0]).to.equal("enter");
                 expect(this.context.events.execute.getCall(2).args[1]).to.equal("damaged");
-                expect(this.context.events.execute.getCall(2).args[2]).to.have.property(
-                    "parallel",
-                    true
-                );
                 expect(this.context.events.execute.getCall(3).args[0]).to.equal("after");
                 expect(this.context.events.execute.getCall(3).args[1]).to.equal("break");
-                expect(this.context.events.execute.getCall(3).args[2]).to.have.property(
-                    "parallel",
-                    true
-                );
             });
         });
 

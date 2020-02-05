@@ -52,7 +52,7 @@ function createInterface() {
                 remove: () => events.remove(event, stateOrTransition, callback)
             };
         },
-        execute: (event, stateOrTransition, { parallel = false, from, to, transition } = {}) => {
+        execute: (event, stateOrTransition, { from, to, transition } = {}) => {
             const type = resolveEventType(event);
             const work = handlers.filter(
                 item =>
@@ -60,17 +60,6 @@ function createInterface() {
                     item.event === event &&
                     (item.value === stateOrTransition || item.value === "*")
             );
-            if (parallel) {
-                return Promise.all(
-                    work.map(item =>
-                        callbackToPromise(item.callback, { from, to, transition }).then(() => {
-                            if (item.once === true) {
-                                events.remove(event, stateOrTransition, item.callback);
-                            }
-                        })
-                    )
-                );
-            }
             return (function doNext() {
                 const item = work.shift();
                 if (!item) {

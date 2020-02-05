@@ -96,7 +96,6 @@ function transition(context, action) {
         })
         .then(() =>
             context.events.execute("enter", toState, {
-                parallel: true,
                 from: fromState,
                 to: toState,
                 transition: transitionName
@@ -104,7 +103,6 @@ function transition(context, action) {
         )
         .then(() =>
             context.events.execute("after", transitionName, {
-                parallel: true,
                 from: fromState,
                 to: toState,
                 transition: transitionName
