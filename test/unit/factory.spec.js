@@ -1,8 +1,9 @@
-const { createStateMachine } = require("../../source/factory.js");
+import { expect } from "chai";
+import { createStateMachine } from "../../dist/factory.js";
 
-describe("factory", function() {
-    describe("createStateMachine", function() {
-        beforeEach(function() {
+describe("factory", function () {
+    describe("createStateMachine", function () {
+        beforeEach(function () {
             this.sm = createStateMachine({
                 initial: "ready",
                 transitions: [
@@ -13,18 +14,16 @@ describe("factory", function() {
             });
         });
 
-        it("returns an interface that has a state", function() {
+        it("returns an interface that has a state", function () {
             expect(this.sm.state).to.equal("ready");
         });
 
-        it("returns an interface that has a pending state", function() {
+        it("returns an interface that has a pending state", function () {
             expect(this.sm.pending).to.be.a("boolean");
         });
 
-        it("returns an interface that has a transition method", function() {
-            expect(this.sm)
-                .to.have.property("transition")
-                .that.is.a("function");
+        it("returns an interface that has a transition method", function () {
+            expect(this.sm).to.have.property("transition").that.is.a("function");
         });
     });
 });

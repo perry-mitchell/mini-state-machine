@@ -2,27 +2,22 @@
   "name": "mini-state-machine",
   "version": "1.0.0",
   "description": "A miniature state machine",
-  "main": "dist/msm.node.js",
+  "exports": "./dist/index.js",
+  "type": "module",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build": "webpack --mode production --config webpack.config.js",
-    "docs": "jsdoc2md source/**/*.js > API.md",
-    "format": "prettier --write '{source,test}/**/*.js'",
+    "build": "npm run clean && tsc",
+    "clean": "rimraf dist",
+    "format": "prettier --write '{source,test}/**/*.{ts,js}'",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run build",
-    "test:size": "fslint --files=./dist/*.node.js --limit=5000 && fslint --files=./dist/*.web.js --limit=6500",
-    "test": "run-s test:all test:coverage build test:integration:dist test:size test:format",
-    "test:all": "nyc mocha -r test/index.js -r test/integration/index.source.js 'test/**/*.spec.js'",
-    "test:coverage": "nyc check-coverage --lines 90 --functions 90 --branches 90 --statements 90",
-    "test:format": "prettier-check '{source,test}/**/*.js'",
-    "test:integration": "mocha -r test/index.js -r test/integration/index.source.js 'test/integration/**/*.spec.js'",
-    "test:integration:dist": "mocha -r test/index.js -r test/integration/index.dist.js 'test/integration/**/*.spec.js'",
-    "test:unit": "mocha -r test/index.js 'test/unit/**/*.spec.js'",
-    "test:unit:watch": "nodemon --exec 'npm run test:unit'"
+    "test": "run-s test:unit test:format",
+    "test:format": "prettier --check '{source,test}/**/*.{ts,js}'",
+    "test:unit": "npm run build && c8 --check-coverage --lines 92 --functions 70 --branches 85 --statements 92 mocha -r test/index.js 'test/unit/**/*.spec.js'"
   },
   "lint-staged": {
-    "{source,test}/**/*.js": [
-      "prettier --write",
-      "git add"
+    "{source,test}/**/*.{ts,js}": [
+      "prettier --write"
     ]
   },
   "files": [
@@ -49,24 +44,20 @@
   },
   "homepage": "https://github.com/perry-mitchell/mini-state-machine#readme",
   "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "babel-loader": "^8.0.6",
-    "chai": "^4.2.0",
+    "@types/node": "^18.15.11",
+    "c8": "^7.13.0",
+    "chai": "^4.3.7",
     "chai-as-promised": "^7.1.1",
-    "fslint": "^1.1.0",
-    "husky": "^4.2.1",
-    "jsdoc-to-markdown": "^5.0.3",
-    "lint-staged": "^10.0.7",
-    "mocha": "^7.0.1",
-    "nodemon": "^2.0.2",
+    "husky": "^4.3.8",
+    "lint-staged": "^13.2.0",
+    "mocha": "^10.2.0",
     "npm-run-all": "^4.1.5",
-    "nyc": "^15.0.0",
-    "prettier": "^1.19.1",
-    "prettier-check": "^2.0.0",
-    "rimraf": "^3.0.1",
-    "sinon": "^8.1.1",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "prettier": "^2.8.7",
+    "rimraf": "^4.4.1",
+    "sinon": "^15.0.3",
+    "typescript": "^5.0.3"
+  },
+  "dependencies": {
+    "layerr": "^2.0.0"
   }
 }

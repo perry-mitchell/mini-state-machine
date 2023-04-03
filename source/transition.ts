@@ -1,12 +1,15 @@
-const { getState } = require("./state.js");
-const { find } = require("./array.js");
+import { Layerr } from "layerr";
+import { find } from "./array.js";
+import { StateMachineContext } from "./factory.js";
+import { getState } from "./state.js";
+import { ErrorCode, Transition } from "./types.js";
 
 const ERR_CODE_TRANSITION_CANCELLED = "TRANSITION_CANCELLED";
 
-function generatePaths(transitions) {
-    const allStates = transitions.reduce((states, transition) => {
+export function generatePaths(transitions: Array<Transition>): Array<Transition> {
+    const allStates: Array<string> = transitions.reduce((states, transition) => {
         const { from: fromState, to: toState } = transition;
-        const newStates = [];
+        const newStates: Array<string> = [];
         if (fromState !== "*" && states.indexOf(fromState) === -1) {
             newStates.push(fromState);
         }
@@ -29,24 +32,39 @@ function generatePaths(transitions) {
     }, []);
 }
 
-function getPath(context, action) {
+export function getPath(context: StateMachineContext, action: string): Transition {
     const state = getState(context);
     return find(context.paths, statePath => statePath.name === action && statePath.from === state);
 }
 
-function transition(context, action) {
+export function transition(context: StateMachineContext, action: string): Promise<void> {
     const state = getState(context);
     const errorPrefix = `Failed transitioning (${action})`;
     const path = getPath(context, action);
     if (!path) {
         const state = getState(context);
-        throw new Error(
+        throw new Layerr(
+            {
+                info: {
+                    code: ErrorCode.NoTransition,
+                    state,
+                    action
+                }
+            },
             `${errorPrefix}: No transition path found for action '${action}' (state: ${state})`
         );
     }
     const { name: transitionName, from: fromState, to: toState } = path;
     if (context.pending) {
-        throw new Error(
+        throw new Layerr(
+            {
+                info: {
+                    code: ErrorCode.TransitionPending,
+                    state,
+                    action,
+                    next: context.next
+                }
+            },
             `${errorPrefix}: Currently pending a transition: ${state} => ${context.next}`
         );
     }
@@ -60,13 +78,16 @@ function transition(context, action) {
             to: toState,
             transition: transitionName
         })
-        .then(result => {
+        .then((result: boolean) => {
             if (result === false) {
-                const err = new Error(
+                throw new Layerr(
+                    {
+                        info: {
+                            code: ErrorCode.TransitionCancelled
+                        }
+                    },
                     `${errorPrefix}: before event handler cancelled transition: ${transErrorMsg}`
                 );
-                err.code = ERR_CODE_TRANSITION_CANCELLED;
-                throw err;
             }
             return context.events.execute("leave", fromState, {
                 from: fromState,
@@ -74,13 +95,16 @@ function transition(context, action) {
                 transition: transitionName
             });
         })
-        .then(result => {
+        .then((result: boolean) => {
             if (result === false) {
-                const err = new Error(
+                throw new Layerr(
+                    {
+                        info: {
+                            code: ErrorCode.TransitionCancelled
+                        }
+                    },
                     `${errorPrefix}: leave event handler cancelled transition: ${transErrorMsg}`
                 );
-                err.code = ERR_CODE_TRANSITION_CANCELLED;
-                throw err;
             }
             // state change now
             context.state = toState;
@@ -108,34 +132,28 @@ function transition(context, action) {
                 transition: transitionName
             })
         )
-        .then(() => true)
+        .then(() => {})
         .catch(err => {
             context.pending = false;
-            if (err.code === ERR_CODE_TRANSITION_CANCELLED) {
+            const { code: errorCode } = Layerr.info(err);
+            if (errorCode === ErrorCode.TransitionCancelled) {
                 return false;
             }
             throw err;
-        });
+        }) as Promise<void>;
 }
 
-function verifyTransitions(transitions) {
+export function verifyTransitions(transitions: Array<Transition>): void {
     if (!Array.isArray(transitions) || transitions.length <= 0) {
         throw new Error("Transitions must be a non-empty array");
     }
     transitions.forEach(transition => {
         ["name", "from", "to"].forEach(strKey => {
             if (typeof transition[strKey] !== "string" || transition[strKey].length <= 0) {
-                throw new Error(
+                throw new Layerr(
                     `Invalid transition value for '${strKey}': Must be a non-empty string`
                 );
             }
         });
     });
 }
-
-module.exports = {
-    generatePaths,
-    getPath,
-    transition,
-    verifyTransitions
-};

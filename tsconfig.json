@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "declaration": true,
+        "downlevelIteration": true,
+        "strict": false,
+        "target": "ES2015"
+    },
+    "include": [
+        "./source/**/*"
+    ]
+}

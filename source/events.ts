@@ -1,13 +1,54 @@
-const { find } = require("./array.js");
+import { find } from "./array.js";
 
-const EVENT_TYPE_STATE = "s";
+interface AddEventOptions {
+    /**
+     * Listen for only 1 event emission
+     */
+    once?: boolean;
+}
+
+interface AddEventHandler {
+    /**
+     * Remove the event handler
+     */
+    remove: () => void;
+}
+
+type EventCallback = (...args: Array<any>) => boolean | void | Promise<boolean | void>;
+
+enum EventType {
+    State = "s",
+    Transition = "t"
+}
+
+export interface EventsInterface {
+    "@@handlers": Array<any>;
+    add: (
+        event: string,
+        stateOrTransition: string,
+        callback: () => void,
+        options?: AddEventOptions
+    ) => AddEventHandler;
+    execute: (
+        event: string,
+        stateOrTransition: string,
+        options?: ExecuteOptions
+    ) => Promise<boolean>;
+    remove: (event: string, stateOrTransition: string, callback: () => void) => void;
+}
+
+interface ExecuteOptions {
+    from: string;
+    to: string;
+    transition: string;
+}
+
 const EVENT_TYPE_STATE_REXP = /^(enter|leave)/;
-const EVENT_TYPE_TRANSITION = "t";
 const EVENT_TYPE_TRANSITION_REXP = /^(before|after)/;
 
-function callbackToPromise(callback, ...args) {
-    let output,
-        uncaught = null;
+function callbackToPromise(callback: EventCallback, ...args: Array<any>): Promise<boolean | void> {
+    let output: boolean | void | Promise<boolean | void>,
+        uncaught: null | Error = null;
     try {
         output = callback(...args);
     } catch (err) {
@@ -29,9 +70,9 @@ function callbackToPromise(callback, ...args) {
         });
 }
 
-function createInterface() {
+export function createEventsInterface(): EventsInterface {
     const handlers = [];
-    const events = {
+    const events: EventsInterface = {
         "@@handlers": handlers,
         add: (event, stateOrTransition, callback, { once = false } = {}) => {
             handlers.push({
@@ -41,18 +82,11 @@ function createInterface() {
                 callback,
                 once
             });
-            /**
-             * @class AttachedEventHandlerResult
-             */
             return {
-                /**
-                 * Remove the event handler
-                 * @memberof AttachedEventHandlerResult
-                 */
                 remove: () => events.remove(event, stateOrTransition, callback)
             };
         },
-        execute: (event, stateOrTransition, { from, to, transition } = {}) => {
+        execute: (event, stateOrTransition, options: ExecuteOptions) => {
             const type = resolveEventType(event);
             const work = handlers.filter(
                 item =>
@@ -65,7 +99,7 @@ function createInterface() {
                 if (!item) {
                     return Promise.resolve();
                 }
-                return callbackToPromise(item.callback, { from, to, transition }).then(result => {
+                return callbackToPromise(item.callback, options).then(result => {
                     if (item.once === true) {
                         events.remove(event, stateOrTransition, item.callback);
                     }
@@ -99,15 +133,11 @@ function createInterface() {
     return events;
 }
 
-function resolveEventType(event) {
+function resolveEventType(event: string): EventType {
     if (EVENT_TYPE_STATE_REXP.test(event)) {
-        return EVENT_TYPE_STATE;
+        return EventType.State;
     } else if (EVENT_TYPE_TRANSITION_REXP.test(event)) {
-        return EVENT_TYPE_TRANSITION;
+        return EventType.Transition;
     }
     throw new Error(`Failed resolving event type: unrecognised prefix: ${event}`);
 }
-
-module.exports = {
-    createInterface
-};

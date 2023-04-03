@@ -13,7 +13,9 @@ State machines such as this one can help you map out your states and transition 
 
 Such a diagram can easily be modelled as a state machine using this library:
 
-```javascript
+```typescript
+import { createStateMachine } from "mini-state-machine";
+
 createStateMachine({
     initial: "idle",
     transitions: [
@@ -34,8 +36,8 @@ Currently the NodeJS version is **less than 5kb minified!**
 
 Usage is simple: Create a state machine instance and you're ready to go!
 
-```javascript
-const { createStateMachine } = require("mini-state-machine");
+```typescript
+import { createStateMachine } from "mini-state-machine";
 
 const sm = createStateMachine({
     initial: "hidden",
@@ -54,7 +56,7 @@ await sm.transition("show"); // Exception: No path for this transition
 
 Event handlers can be attached so each transition can be watched using callbacks. Transitions can be **cancelled** in the `"before"` and `"leave"` callback types by either returning `false` or throwing an error (or rejecting a `Promise`).
 
-```javascript
+```typescript
 sm.on("before", "show", () => {
     if (someTest()) {
         // cancel show
@@ -75,7 +77,7 @@ The methods `off(type, stateOrTransitionName, callback)` and `once(type, stateOr
 
 You can also listen to all events by using an asterisk:
 
-```javascript
+```typescript
 sm.on("after", "*", event => {
     // 'event' :
     // {
@@ -100,13 +102,13 @@ You can get the entire history of the state machine by calling `sm.getHistory()`
 
 Each history item will conform to the following structure:
 
-| Property      | Type          | Description                                |
-|---------------|---------------|--------------------------------------------|
-| tsStart       | Number        | The timestamp at which the transition started. |
-| tsEnd         | Number        | The timestamp at which the transition ended. |
-| state         | String        | The state that was set at the end of the transition. |
-| previous      | String        | The previous state before the transition.  |
-| transition    | String        | The transition name.                       |
+| Property      | Type          | Description                                           |
+|---------------|---------------|-------------------------------------------------------|
+| tsStart       | Number        | The timestamp at which the transition started.        |
+| tsEnd         | Number        | The timestamp at which the transition ended.          |
+| state         | String        | The state that was set at the end of the transition.  |
+| previous      | String        | The previous state before the transition.             |
+| transition    | String        | The transition name.                                  |
 
 #### Event Lifecycle
 
@@ -129,10 +131,6 @@ Run the following to install:
 npm install mini-state-machine --save
 ```
 
-_This library supports **NodeJS 10** as a minimum compatible version_.
+_This library supports **NodeJS 16** as a minimum compatible version_.
 
-### Usage in the browser
-
-The default `main` path in the `package.json` is for Node, but a precompiled web version can be had at `mini-state-machine/dist/msm.web.js`. The web version uses the UMD package system, and exports a library called `MSM`. You can use `MSM.createStateMachine` to create state machines.
-
-The browser version is built targeting Internet Explorer 11 as a minimum compatible browser.
+This package is in **ESM** module. It needs to be bundled with a tool like _Webpack_ before being used in the browser.
