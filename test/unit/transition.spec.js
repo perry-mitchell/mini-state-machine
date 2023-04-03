@@ -1,9 +1,11 @@
-const {
+import { expect } from "chai";
+import sinon from "sinon";
+import {
     generatePaths,
     getPath,
     transition,
     verifyTransitions
-} = require("../../source/transition.js");
+} from "../../dist/transition.js";
 
 describe("transition", function() {
     describe("generatePaths", function() {

@@ -1,9 +1,11 @@
-const { createInterface } = require("../../source/events.js");
+import { expect } from "chai";
+import sinon from "sinon";
+import { createEventsInterface } from "../../dist/events.js";
 
 describe("events", function() {
-    describe("createInterface", function() {
+    describe("createEventsInterface", function() {
         beforeEach(function() {
-            this.events = createInterface();
+            this.events = createEventsInterface();
             this.handlers = this.events["@@handlers"];
         });
 

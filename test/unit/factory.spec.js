@@ -1,4 +1,5 @@
-const { createStateMachine } = require("../../source/factory.js");
+import { expect } from "chai";
+import { createStateMachine } from "../../dist/factory.js";
 
 describe("factory", function() {
     describe("createStateMachine", function() {

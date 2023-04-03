@@ -1,4 +1,5 @@
-const { find } = require("../../source/array.js");
+import { expect } from "chai";
+import { find } from "../../dist/array.js";
 
 describe("array", function() {
     describe("find", function() {
