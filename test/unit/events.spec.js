@@ -2,42 +2,40 @@ import { expect } from "chai";
 import sinon from "sinon";
 import { createEventsInterface } from "../../dist/events.js";
 
-describe("events", function() {
-    describe("createEventsInterface", function() {
-        beforeEach(function() {
+describe("events", function () {
+    describe("createEventsInterface", function () {
+        beforeEach(function () {
             this.events = createEventsInterface();
             this.handlers = this.events["@@handlers"];
         });
 
-        describe("add", function() {
-            it("adds handlers", function() {
+        describe("add", function () {
+            it("adds handlers", function () {
                 expect(this.handlers).to.have.lengthOf(0);
                 this.events.add("after", "action", () => {});
                 expect(this.handlers).to.have.lengthOf(1);
             });
 
-            it("returns expected payload", function() {
+            it("returns expected payload", function () {
                 const result = this.events.add("after", "action", () => {});
-                expect(result)
-                    .to.have.property("remove")
-                    .that.is.a("function");
+                expect(result).to.have.property("remove").that.is.a("function");
             });
 
-            it("supports removing handlers by calling 'remove'", function() {
+            it("supports removing handlers by calling 'remove'", function () {
                 const result = this.events.add("after", "action", () => {});
                 expect(result.remove).to.not.throw();
                 expect(this.handlers).to.have.lengthOf(0);
             });
 
-            it("does not throw when 'remove' called multiple times", function() {
+            it("does not throw when 'remove' called multiple times", function () {
                 const result = this.events.add("after", "action", () => {});
                 expect(result.remove).to.not.throw();
                 expect(result.remove).to.not.throw();
             });
         });
 
-        describe("execute", function() {
-            it("executes correct handlers", function() {
+        describe("execute", function () {
+            it("executes correct handlers", function () {
                 const one = sinon.spy();
                 const two = sinon.spy();
                 const three = sinon.spy();
@@ -54,7 +52,7 @@ describe("events", function() {
                 });
             });
 
-            it("provides expected information to callbacks", function() {
+            it("provides expected information to callbacks", function () {
                 const cb = sinon.spy();
                 this.events.add("before", "action", cb);
                 return this.events
@@ -67,8 +65,8 @@ describe("events", function() {
             });
         });
 
-        describe("remove", function() {
-            it("removes listeners", function() {
+        describe("remove", function () {
+            it("removes listeners", function () {
                 const cb = sinon.spy();
                 this.events.add("after", "action", cb);
                 this.events.remove("after", "action", cb);

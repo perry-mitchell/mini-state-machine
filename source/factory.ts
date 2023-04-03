@@ -107,7 +107,10 @@ export interface StateMachineContext {
  * @param config Configuration for the new state machine
  * @returns A state machine instance
  */
-export function createStateMachine({ initial, transitions }: StateMachineConfiguration): StateMachine {
+export function createStateMachine({
+    initial,
+    transitions
+}: StateMachineConfiguration): StateMachine {
     if (!initial || initial.length <= 0) {
         throw new Error(`Invalid initial state: ${initial}`);
     }

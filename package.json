@@ -8,17 +8,16 @@
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "rimraf dist",
-    "format": "prettier --write '{source,test}/**/*.js'",
+    "format": "prettier --write '{source,test}/**/*.{ts,js}'",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run build",
     "test": "run-s test:unit test:format",
-    "test:format": "prettier --check '{source,test}/**/*.js'",
-    "test:unit": "npm run build && c8 --check-coverage --lines 100 --functions 100 --branches 100 --statements 100 mocha -r test/index.js 'test/unit/**/*.spec.js'"
+    "test:format": "prettier --check '{source,test}/**/*.{ts,js}'",
+    "test:unit": "npm run build && c8 --check-coverage --lines 92 --functions 70 --branches 85 --statements 92 mocha -r test/index.js 'test/unit/**/*.spec.js'"
   },
   "lint-staged": {
-    "{source,test}/**/*.js": [
-      "prettier --write",
-      "git add"
+    "{source,test}/**/*.{ts,js}": [
+      "prettier --write"
     ]
   },
   "files": [

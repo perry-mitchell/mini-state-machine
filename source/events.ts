@@ -23,8 +23,17 @@ enum EventType {
 
 export interface EventsInterface {
     "@@handlers": Array<any>;
-    add: (event: string, stateOrTransition: string, callback: () => void, options?: AddEventOptions) => AddEventHandler;
-    execute: (event: string, stateOrTransition: string, options?: ExecuteOptions) => Promise<boolean>;
+    add: (
+        event: string,
+        stateOrTransition: string,
+        callback: () => void,
+        options?: AddEventOptions
+    ) => AddEventHandler;
+    execute: (
+        event: string,
+        stateOrTransition: string,
+        options?: ExecuteOptions
+    ) => Promise<boolean>;
     remove: (event: string, stateOrTransition: string, callback: () => void) => void;
 }
 
@@ -132,4 +141,3 @@ function resolveEventType(event: string): EventType {
     }
     throw new Error(`Failed resolving event type: unrecognised prefix: ${event}`);
 }
-
