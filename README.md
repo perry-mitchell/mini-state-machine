@@ -1,7 +1,7 @@
 # Mini-State-Machine
 > A tiny Finite State Machine
 
-[![Build Status](https://travis-ci.org/perry-mitchell/mini-state-machine.svg?branch=master)](https://travis-ci.org/perry-mitchell/mini-state-machine) [![npm version](https://badge.fury.io/js/mini-state-machine.svg)](https://www.npmjs.com/package/mini-state-machine)
+![Tests status](https://github.com/perry-mitchell/mini-state-machine/actions/workflows/test.yml/badge.svg) [![npm version](https://badge.fury.io/js/mini-state-machine.svg)](https://www.npmjs.com/package/mini-state-machine)
 
 ## About
 

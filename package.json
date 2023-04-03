@@ -21,7 +21,7 @@
     ]
   },
   "files": [
-    "dist/**/*.js",
+    "dist/**/*",
     "*.md"
   ],
   "repository": {
