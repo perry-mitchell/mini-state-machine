@@ -1,5 +1,12 @@
 # Mini-State-Machine Changelog
 
+## v2.0.0
+_2023-04-03_
+
+ * Typescript
+ * ESM
+ * _No web build_
+
 ## v1.0.0
 _2020-02-05_
 
