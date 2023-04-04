@@ -1,5 +1,12 @@
 # Mini-State-Machine Changelog
 
+## v2.0.1
+_2023-04-04_
+
+ * **Bugfix**:
+   * Return type for `.on` and `.once` methods missing
+   * No exported types for state machine configuration, transitions etc.
+
 ## v2.0.0
 _2023-04-03_
 
