@@ -7,7 +7,7 @@ interface AddEventOptions {
     once?: boolean;
 }
 
-interface AddEventHandler {
+export interface AddEventHandler {
     /**
      * Remove the event handler
      */

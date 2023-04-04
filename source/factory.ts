@@ -1,5 +1,5 @@
 import { cloneArray } from "./clone.js";
-import { EventsInterface, createEventsInterface } from "./events.js";
+import { EventsInterface, createEventsInterface, AddEventHandler } from "./events.js";
 import { getState } from "./state.js";
 import { generatePaths, getPath, transition, verifyTransitions } from "./transition.js";
 import { HistoryItem, StateMachineConfiguration } from "./types.js";
@@ -72,7 +72,7 @@ export interface StateMachine {
      *  // Attached handler can also be removed later:
      *  handler.remove();
      */
-    on: (event: string, stateOrTransition: string, cb: () => void) => void;
+    on: (event: string, stateOrTransition: string, cb: () => void) => AddEventHandler;
     /**
      * Attach a single-use event listener for a particular event
      * This event, once caught, will clear the attached handler.
@@ -82,7 +82,7 @@ export interface StateMachine {
      * @returns An event handler control adapter
      * @see StateMachine#on
      */
-    once: (event: string, stateOrTransition: string, cb: () => void) => void;
+    once: (event: string, stateOrTransition: string, cb: () => void) => AddEventHandler;
     /**
      * Perform a state transition
      * @param action The action to perform which will result in a transition
