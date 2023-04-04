@@ -14,7 +14,7 @@ export interface AddEventHandler {
     remove: () => void;
 }
 
-type EventCallback = (...args: Array<any>) => boolean | void | Promise<boolean | void>;
+export type EventCallback = (execution: ExecuteOptions) => boolean | void | Promise<boolean | void>;
 
 enum EventType {
     State = "s",
@@ -26,7 +26,7 @@ export interface EventsInterface {
     add: (
         event: string,
         stateOrTransition: string,
-        callback: () => void,
+        callback: EventCallback,
         options?: AddEventOptions
     ) => AddEventHandler;
     execute: (
@@ -34,7 +34,7 @@ export interface EventsInterface {
         stateOrTransition: string,
         options?: ExecuteOptions
     ) => Promise<boolean>;
-    remove: (event: string, stateOrTransition: string, callback: () => void) => void;
+    remove: (event: string, stateOrTransition: string, callback: EventCallback) => void;
 }
 
 interface ExecuteOptions {
@@ -46,11 +46,14 @@ interface ExecuteOptions {
 const EVENT_TYPE_STATE_REXP = /^(enter|leave)/;
 const EVENT_TYPE_TRANSITION_REXP = /^(before|after)/;
 
-function callbackToPromise(callback: EventCallback, ...args: Array<any>): Promise<boolean | void> {
+function callbackToPromise(
+    callback: EventCallback,
+    options: ExecuteOptions
+): Promise<boolean | void> {
     let output: boolean | void | Promise<boolean | void>,
         uncaught: null | Error = null;
     try {
-        output = callback(...args);
+        output = callback(options);
     } catch (err) {
         uncaught = err;
         output = false;
@@ -71,7 +74,13 @@ function callbackToPromise(callback: EventCallback, ...args: Array<any>): Promis
 }
 
 export function createEventsInterface(): EventsInterface {
-    const handlers = [];
+    const handlers: Array<{
+        event: string;
+        type: EventType;
+        value: string;
+        callback: EventCallback;
+        once: boolean;
+    }> = [];
     const events: EventsInterface = {
         "@@handlers": handlers,
         add: (event, stateOrTransition, callback, { once = false } = {}) => {

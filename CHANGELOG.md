@@ -1,5 +1,11 @@
 # Mini-State-Machine Changelog
 
+## v2.0.2
+_2023-04-04_
+
+ * **Bugfix**:
+   * Event callback types missing
+
 ## v2.0.1
 _2023-04-04_
 

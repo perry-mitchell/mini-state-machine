@@ -1,5 +1,10 @@
 import { cloneArray } from "./clone.js";
-import { EventsInterface, createEventsInterface, AddEventHandler } from "./events.js";
+import {
+    EventsInterface,
+    AddEventHandler,
+    EventCallback,
+    createEventsInterface
+} from "./events.js";
 import { getState } from "./state.js";
 import { generatePaths, getPath, transition, verifyTransitions } from "./transition.js";
 import { HistoryItem, StateMachineConfiguration } from "./types.js";
@@ -59,7 +64,7 @@ export interface StateMachine {
      *  // Later:
      *  sm.off("leave", "hidden", callback);
      */
-    off: (event: string, stateOrTransition: string, cb: () => void) => void;
+    off: (event: string, stateOrTransition: string, cb: EventCallback) => void;
     /**
      * Attach (turn on) an event listener for a particular event
      * @param event The event type to attach to (before/after etc.)
@@ -72,7 +77,7 @@ export interface StateMachine {
      *  // Attached handler can also be removed later:
      *  handler.remove();
      */
-    on: (event: string, stateOrTransition: string, cb: () => void) => AddEventHandler;
+    on: (event: string, stateOrTransition: string, cb: EventCallback) => AddEventHandler;
     /**
      * Attach a single-use event listener for a particular event
      * This event, once caught, will clear the attached handler.
@@ -82,7 +87,7 @@ export interface StateMachine {
      * @returns An event handler control adapter
      * @see StateMachine#on
      */
-    once: (event: string, stateOrTransition: string, cb: () => void) => AddEventHandler;
+    once: (event: string, stateOrTransition: string, cb: EventCallback) => AddEventHandler;
     /**
      * Perform a state transition
      * @param action The action to perform which will result in a transition
