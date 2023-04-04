@@ -1,6 +1,6 @@
 {
   "name": "mini-state-machine",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A miniature state machine",
   "exports": "./dist/index.js",
   "type": "module",
