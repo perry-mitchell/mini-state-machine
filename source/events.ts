@@ -29,6 +29,8 @@ export interface EventsInterface {
         callback: EventCallback,
         options?: AddEventOptions
     ) => AddEventHandler;
+    addIdle: (callback: EventCallback) => AddEventHandler;
+    emitIdle: () => Promise<void>;
     execute: (
         event: string,
         stateOrTransition: string,
@@ -48,7 +50,7 @@ const EVENT_TYPE_TRANSITION_REXP = /^(before|after)/;
 
 function callbackToPromise(
     callback: EventCallback,
-    options: ExecuteOptions
+    options?: ExecuteOptions
 ): Promise<boolean | void> {
     let output: boolean | void | Promise<boolean | void>,
         uncaught: null | Error = null;
@@ -81,6 +83,7 @@ export function createEventsInterface(): EventsInterface {
         callback: EventCallback;
         once: boolean;
     }> = [];
+    const idleCallbacks: Array<EventCallback> = [];
     const events: EventsInterface = {
         "@@handlers": handlers,
         add: (event, stateOrTransition, callback, { once = false } = {}) => {
@@ -94,6 +97,23 @@ export function createEventsInterface(): EventsInterface {
             return {
                 remove: () => events.remove(event, stateOrTransition, callback)
             };
+        },
+        addIdle: callback => {
+            idleCallbacks.push(callback);
+            return {
+                remove: () => {
+                    const ind = idleCallbacks.indexOf(callback);
+                    if (ind >= 0) {
+                        idleCallbacks.splice(ind, 1);
+                    }
+                }
+            };
+        },
+        emitIdle: () => {
+            if (idleCallbacks.length <= 0) return Promise.resolve();
+            return Promise.all(idleCallbacks.map(callback => callbackToPromise(callback))).then(
+                () => {}
+            );
         },
         execute: (event, stateOrTransition, options: ExecuteOptions) => {
             const type = resolveEventType(event);

@@ -52,6 +52,14 @@ describe("events", function () {
                 });
             });
 
+            it("executes idle callback", function () {
+                const idleCB = sinon.spy();
+                this.events.addIdle(idleCB);
+                return this.events.emitIdle().then(() => {
+                    expect(idleCB.callCount).to.equal(1, "idle CB should be called once");
+                });
+            });
+
             it("provides expected information to callbacks", function () {
                 const cb = sinon.spy();
                 this.events.add("before", "action", cb);

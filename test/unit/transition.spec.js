@@ -59,6 +59,7 @@ describe("transition", function () {
                     { name: "fix", from: "ok", to: "invulnerable" }
                 ]),
                 events: {
+                    emitIdle: sinon.stub().callsFake(() => Promise.resolve()),
                     execute: sinon.stub().callsFake(() => Promise.resolve())
                 },
                 pending: false,
@@ -71,6 +72,12 @@ describe("transition", function () {
             return transition(this.context, "break").then(() => {
                 expect(this.context.state).to.equal("damaged");
                 expect(this.context.pending).to.be.false;
+            });
+        });
+
+        it("executes idle callback after transition", function () {
+            return transition(this.context, "break").then(() => {
+                expect(this.context.events.emitIdle.callCount).to.equal(1);
             });
         });
 

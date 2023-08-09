@@ -4,8 +4,6 @@ import { StateMachineContext } from "./factory.js";
 import { getState } from "./state.js";
 import { ErrorCode, Transition } from "./types.js";
 
-const ERR_CODE_TRANSITION_CANCELLED = "TRANSITION_CANCELLED";
-
 export function generatePaths(transitions: Array<Transition>): Array<Transition> {
     const allStates: Array<string> = transitions.reduce((states, transition) => {
         const { from: fromState, to: toState } = transition;
@@ -132,7 +130,7 @@ export function transition(context: StateMachineContext, action: string): Promis
                 transition: transitionName
             })
         )
-        .then(() => {})
+        .then(() => context.events.emitIdle())
         .catch(err => {
             context.pending = false;
             const { code: errorCode } = Layerr.info(err);

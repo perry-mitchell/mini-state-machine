@@ -89,6 +89,12 @@ export interface StateMachine {
      */
     once: (event: string, stateOrTransition: string, cb: EventCallback) => AddEventHandler;
     /**
+     * Attach a callback that fires when the state machine becomes idle
+     * @param cb The callback to attach
+     * @returns An event handler control adapter
+     */
+    onIdle: (cb: EventCallback) => AddEventHandler;
+    /**
      * Perform a state transition
      * @param action The action to perform which will result in a transition
      * @returns A promise that resolves once the transition is complete
@@ -143,6 +149,7 @@ export function createStateMachine({
         on: (event, stateOrTransition, cb) => context.events.add(event, stateOrTransition, cb),
         once: (event, stateOrTransition, cb) =>
             context.events.add(event, stateOrTransition, cb, { once: true }),
+        onIdle: cb => context.events.addIdle(cb),
         transition: action => transition(context, action)
     };
     return sm;
