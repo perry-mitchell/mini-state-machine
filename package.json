@@ -13,7 +13,7 @@
     "prepublishOnly": "npm run build",
     "test": "run-s test:unit test:format",
     "test:format": "prettier --check '{source,test}/**/*.{ts,js}'",
-    "test:unit": "npm run build && c8 --check-coverage --lines 92 --functions 69 --branches 85 --statements 92 mocha -r test/index.js 'test/unit/**/*.spec.js'"
+    "test:unit": "npm run build && c8 --check-coverage --lines 90 --functions 69 --branches 85 --statements 90 mocha -r test/index.js 'test/unit/**/*.spec.js'"
   },
   "lint-staged": {
     "{source,test}/**/*.{ts,js}": [

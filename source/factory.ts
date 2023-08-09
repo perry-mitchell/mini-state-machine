@@ -149,7 +149,13 @@ export function createStateMachine({
         on: (event, stateOrTransition, cb) => context.events.add(event, stateOrTransition, cb),
         once: (event, stateOrTransition, cb) =>
             context.events.add(event, stateOrTransition, cb, { once: true }),
-        onIdle: cb => context.events.addIdle(cb),
+        onIdle: cb => {
+            const handler = context.events.addIdle(cb);
+            if (!context.pending) {
+                context.events.emitIdle(cb);
+            }
+            return handler;
+        },
         transition: action => transition(context, action)
     };
     return sm;

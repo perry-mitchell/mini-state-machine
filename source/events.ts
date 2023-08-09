@@ -30,7 +30,7 @@ export interface EventsInterface {
         options?: AddEventOptions
     ) => AddEventHandler;
     addIdle: (callback: EventCallback) => AddEventHandler;
-    emitIdle: () => Promise<void>;
+    emitIdle: (target?: EventCallback) => Promise<void>;
     execute: (
         event: string,
         stateOrTransition: string,
@@ -109,7 +109,10 @@ export function createEventsInterface(): EventsInterface {
                 }
             };
         },
-        emitIdle: () => {
+        emitIdle: (target?: EventCallback) => {
+            if (target) {
+                return callbackToPromise(target).then(() => {});
+            }
             if (idleCallbacks.length <= 0) return Promise.resolve();
             return Promise.all(idleCallbacks.map(callback => callbackToPromise(callback))).then(
                 () => {}
