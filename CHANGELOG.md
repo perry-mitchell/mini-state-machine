@@ -1,5 +1,10 @@
 # Mini-State-Machine Changelog
 
+## v2.1.0
+_2023-08-09_
+
+ * `onIdle` event callback
+
 ## v2.0.2
 _2023-04-04_
 
