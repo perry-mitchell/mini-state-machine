@@ -1,5 +1,11 @@
 # Mini-State-Machine Changelog
 
+## v2.1.1
+_2023-08-09_
+
+ * **Bugfix**:
+   * Execute idle callback if already idle
+
 ## v2.1.0
 _2023-08-09_
 
